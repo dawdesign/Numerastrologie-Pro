@@ -1,15 +1,33 @@
-# React + TypeScript + Vite
+# Numerastrologie Pro
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Application web moderne d'astrologie et de numérologie (React + TypeScript + Vite).
 
-Currently, two official plugins are available:
+## 🚀 Installation & Lancement rapide
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Pour cloner et exécuter ce projet localement :
 
-## React Compiler
+```bash
+# 1. Cloner le dépôt
+git clone https://github.com/dawdesign/Numerastrologie-Pro.git
+cd Numerastrologie-Pro
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+# 2. Installer toutes les dépendances
+npm install
+
+# 3. Lancer le serveur de développement
+npm run dev
+
+# 4. Compiler pour la production
+npm run build
+```
+
+L'application sera accessible sur `http://localhost:5200/`.
+
+## 📦 Dépendances incluses
+- **React 19** & **React DOM**
+- **React Router 7**
+- **Lucide React** (icônes)
+- **Vite 7** & **TypeScript 5.9**
 
 ## Expanding the ESLint configuration
 
