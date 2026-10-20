@@ -202,6 +202,7 @@ const translations: Record<Language, Record<string, string>> = {
     'Reset to Today': 'Réinitialiser',
     'Today': "Aujourd'hui",
     'Recent Searches': 'Recherches récentes',
+    'Search for celebrities or countries...': 'Rechercher des célébrités ou des pays...',
     'Numerastrologie Pro by DD22': 'Numerastrologie Pro by DD22',
     'Locked in free version': 'Verrouillé dans la version gratuite',
 
