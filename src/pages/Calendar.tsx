@@ -700,7 +700,6 @@ export default function Calendar() {
                                     </div>
 
                                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '10px 6px', minWidth: 0, overflow: 'hidden', justifyContent: 'center' }}>
-                                        <div style={{ fontSize: '0.68rem', textTransform: 'uppercase', color: 'var(--text-secondary)', fontWeight: 600, minHeight: '2.4em', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1.2, textAlign: 'center', wordBreak: 'break-word' }}>{t('Primary Earth Month')}</div>
                                         <LockedBox size={26} style={{ padding: '6px' }} />
                                     </div>
                                 </div>
