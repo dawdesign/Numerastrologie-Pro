@@ -1379,7 +1379,13 @@ export default function Calculator() {
                                 {t('Lucky #')}
                             </div>
                             <div style={{ fontSize: 'clamp(1.2rem, 5vw, 2.8rem)', fontWeight: 800, color: 'var(--accent-gold)', lineHeight: 1 }}>
-                                {reading.luckyNumber.base !== reading.luckyNumber.flipped ? `${reading.luckyNumber.base},${reading.luckyNumber.flipped}` : reading.luckyNumber.base}
+                                {reading.luckyNumber.base !== reading.luckyNumber.flipped ? (
+                                    <>
+                                        <span>{reading.luckyNumber.base}</span>
+                                        <span style={{ color: 'var(--text-tertiary)', margin: '0 3px', fontWeight: 300 }}>/</span>
+                                        <span>{reading.luckyNumber.flipped}</span>
+                                    </>
+                                ) : reading.luckyNumber.base}
                             </div>
                         </div>
 
