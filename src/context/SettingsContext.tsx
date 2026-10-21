@@ -40,6 +40,7 @@ const translations: Record<Language, Record<string, string>> = {
     'Wiki': 'Wiki',
 
     // Profiles & Energy
+    'Numbers': 'Numbers',
     'Life Path': 'Life Path',
     'sec. energy': 'secondary energy',
     'Personality Profile': 'Personality Profile',
@@ -214,6 +215,7 @@ const translations: Record<Language, Record<string, string>> = {
     'Wiki': 'Wiki',
 
     // Profiles & Energy
+    'Numbers': 'Nombres',
     'Life Path': 'Chemin de vie',
     'sec. energy': 'énergie secondaire',
     'Personality Profile': 'Profil de personnalité',

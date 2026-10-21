@@ -163,7 +163,28 @@ export default function Calendar() {
     const getMonthColorStyle = (_month: number): { background?: string, color?: string, border?: string } => { return {}; };
 
     // Helper to determine year color based on compatibility
-    const getYearColorStyle = (_year: number): { background?: string, color?: string, border?: string } => { return {}; };
+    const getYearColorStyle = (year: number): { background?: string, color?: string, border?: string } => {
+        if (!exportedProfile) return {};
+        const yearSign = getEarthSign(year, 6, 1);
+        const compat = checkEarthSignCompatibility(exportedProfile.earthSign, yearSign);
+
+        if (compat === 'Same' || compat === 'Friend' || compat === 'Soulmate') {
+            return {
+                background: 'var(--accent-dark-green)',
+                color: '#fff',
+                border: '1px solid var(--accent-dark-green)'
+            };
+        }
+        if (compat === 'Enemy') {
+            return {
+                background: 'var(--accent-red)',
+                color: '#fff',
+                border: '1px solid var(--accent-red)'
+            };
+        }
+
+        return {};
+    };
 
 
     return (
@@ -307,8 +328,22 @@ export default function Calendar() {
 
                                     const lpLabel = unreduced !== lifepath && typeof lifepath !== 'string' ? `${unreduced}/${lifepath}` : `${lifepath}`;
 
+                                    let isLucky = false;
+                                    if (exportedProfile) {
+                                        const todaysLucky = calculateLuckyNumber(currentMonth, day, currentYear);
+                                        const y1 = Math.floor(currentYear / 100);
+                                        const y2 = currentYear % 100;
+                                        const yearSum = y1 + y2;
+
+                                        isLucky = unreduced === exportedProfile.luckyNumber.base || unreduced === exportedProfile.luckyNumber.flipped ||
+                                            day === exportedProfile.luckyNumber.base || day === exportedProfile.luckyNumber.flipped ||
+                                            todaysLucky.base === exportedProfile.luckyNumber.base || todaysLucky.base === exportedProfile.luckyNumber.flipped ||
+                                            yearSum === exportedProfile.luckyNumber.base || yearSum === exportedProfile.luckyNumber.flipped;
+                                    }
+
                                     const cellStyle = getDailyColorStyle(day);
                                     let cellBorder = cellStyle.border || (isToday ? '1px solid var(--accent-blue)' : '1px solid var(--border-color)');
+                                    if (isLucky) cellBorder = '2px solid var(--accent-gold)';
                                     
 
                                     const cellBg = cellStyle.background || 'var(--bg-main)';
@@ -369,9 +404,22 @@ export default function Calendar() {
                                 const uMonth = reduceCycle(m + reduceCycle(currentYear));
                                 const yearEarthSign = getEarthSign(currentYear, m, 15);
 
+                                let isLucky = false;
+                                if (exportedProfile) {
+                                    const uMonthRaw = m + reduceNumber(currentYear);
+                                    const monthLucky = calculateLuckyNumber(m, 1, currentYear);
+                                    const y1 = Math.floor(currentYear / 100);
+                                    const y2 = currentYear % 100;
+                                    const yearSum = y1 + y2;
+
+                                    isLucky = (uMonthRaw === exportedProfile.luckyNumber.base || uMonthRaw === exportedProfile.luckyNumber.flipped) ||
+                                        (monthLucky.base === exportedProfile.luckyNumber.base || monthLucky.base === exportedProfile.luckyNumber.flipped) ||
+                                        (yearSum === exportedProfile.luckyNumber.base || yearSum === exportedProfile.luckyNumber.flipped);
+                                }
+
                                 const cellStyle = getMonthColorStyle(m);
                                 let cellBorder = cellStyle.border || (isThisMonth ? '1px solid var(--accent-blue)' : '1px solid var(--border-color)');
-                                
+                                if (isLucky) cellBorder = '2px solid var(--accent-gold)';
                                 if (isSelected) cellBorder = 'var(--text-main)';
 
                                 const cellBg = isSelected ? 'var(--text-main)' : (cellStyle.background || 'var(--bg-main)');
@@ -423,9 +471,23 @@ export default function Calendar() {
                                 const uYear = reduceCycle(y);
                                 const eSign = getEarthSign(y, 6, 1); // majority of the year
 
+                                let isLucky = false;
+                                if (exportedProfile) {
+                                    const lastTwo = y % 100;
+                                    const firstTwo = Math.floor(y / 100);
+                                    const yearSum = firstTwo + lastTwo;
+                                    const personAge = y - exportedProfile.year;
+                                    const flippedAge = personAge > 0 ? parseInt(personAge.toString().split('').reverse().join('')) : -1;
+
+                                    isLucky = lastTwo === exportedProfile.luckyNumber.base || lastTwo === exportedProfile.luckyNumber.flipped ||
+                                        yearSum === exportedProfile.luckyNumber.base || yearSum === exportedProfile.luckyNumber.flipped ||
+                                        personAge === exportedProfile.luckyNumber.base || personAge === exportedProfile.luckyNumber.flipped ||
+                                        flippedAge === exportedProfile.luckyNumber.base || flippedAge === exportedProfile.luckyNumber.flipped;
+                                }
+
                                 const cellStyle = getYearColorStyle(y);
                                 let cellBorder = cellStyle.border || (isThisYear ? '1px solid var(--accent-blue)' : '1px solid var(--border-color)');
-                                
+                                if (isLucky) cellBorder = '2px solid var(--accent-gold)';
                                 if (isSelected) cellBorder = 'var(--text-main)';
 
                                 const cellBg = isSelected ? 'var(--text-main)' : (cellStyle.background || 'var(--bg-main)');
@@ -498,6 +560,7 @@ export default function Calendar() {
                     {viewMode === 'Days' && dayReading && (() => {
                         let detailEarthColor = 'inherit';
                         let detailSkyColor = 'inherit';
+                        let luckyReasons: React.ReactNode[] = [];
 
                         if (exportedProfile) {
                             const compat = checkCompatibility(
@@ -506,10 +569,27 @@ export default function Calendar() {
                                 language
                             );
 
+                            const todaysLucky = calculateLuckyNumber(currentMonth, selectedDay, currentYear);
+                            const { base: b, flipped: f } = exportedProfile.luckyNumber;
+                            const y1 = Math.floor(currentYear / 100);
+                            const y2 = currentYear % 100;
+                            const ySumActual = y1 + y2;
+
+                            if (dayReading.unreduced === b || dayReading.unreduced === f) {
+                                luckyReasons.push(language === 'en' ? <span>Day energy (<strong>{dayReading.unreduced}</strong>) matches <strong>{b}/{f}</strong></span> : <span>L'énergie du jour (<strong>{dayReading.unreduced}</strong>) correspond à <strong>{b}/{f}</strong></span>);
+                            }
+                            if (selectedDay === b || selectedDay === f) {
+                                luckyReasons.push(language === 'en' ? <span>Day of the month (<strong>{selectedDay}</strong>) matches <strong>{b}/{f}</strong></span> : <span>Le jour du mois (<strong>{selectedDay}</strong>) correspond à <strong>{b}/{f}</strong></span>);
+                            }
+                            if (todaysLucky.base === b || todaysLucky.base === f) {
+                                luckyReasons.push(language === 'en' ? <span>Date lucky number (<strong>{todaysLucky.base}</strong>) matches <strong>{b}/{f}</strong></span> : <span>Le numéro de chance (<strong>{todaysLucky.base}</strong>) correspond à <strong>{b}/{f}</strong></span>);
+                            }
+                            if (ySumActual === b || ySumActual === f) {
+                                luckyReasons.push(language === 'en' ? <span>Year double-digit sum (<strong>{y1}+{y2}={ySumActual}</strong>) matches <strong>{b}/{f}</strong></span> : <span>La somme de l'année (<strong>{y1}+{y2}={ySumActual}</strong>) correspond à <strong>{b}/{f}</strong></span>);
+                            }
+
                             // Earth Sign specific match
                             detailEarthColor = getCompatColor(compat.astroMatch);
-
-                             
 
                             // Sky Sign specific match
                             const exportedSkySign = exportedProfile.skySign || getWesternSign(exportedProfile.month, exportedProfile.day);
@@ -518,7 +598,7 @@ export default function Calendar() {
                             }
                         }
 
-                        const cardBorder = '1px solid var(--border-color)';
+                        const cardBorder = luckyReasons.length > 0 ? '2px solid var(--accent-gold)' : '1px solid var(--border-color)';
 
                         return (
                             <div className="card matrix-details-card" style={{ border: cardBorder }}>
@@ -526,7 +606,14 @@ export default function Calendar() {
                                     <h3 style={{ margin: 0, fontSize: 'clamp(0.95rem, 1.5vw, 1.2rem)', fontWeight: 700, textAlign: 'center', wordBreak: 'break-word', lineHeight: 1.25 }}>
                                         {new Date(currentYear, currentMonth - 1, selectedDay).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                                     </h3>
-                                    
+                                    {luckyReasons.length > 0 && (
+                                        <div style={{ color: 'var(--accent-gold)', marginTop: '8px', fontSize: '0.82rem', textAlign: 'left', background: 'rgba(212, 175, 55, 0.1)', padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(212, 175, 55, 0.3)', wordBreak: 'break-word' }}>
+                                            <div style={{ fontWeight: 700, marginBottom: '2px', textAlign: 'center' }}>✨ {t('Lucky Day!')}</div>
+                                            <ul style={{ margin: 0, paddingLeft: '14px', color: 'var(--text-main)', lineHeight: 1.35 }}>
+                                                {luckyReasons.map((reason, i) => <li key={i}>{reason}</li>)}
+                                            </ul>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '8px', width: '100%', margin: '8px 0' }}>
@@ -661,12 +748,19 @@ export default function Calendar() {
                         }
 
                         return (
-                            <div className="card matrix-details-card" style={{ border: '1px solid var(--border-color)' }}>
+                            <div className="card matrix-details-card" style={{ border: luckyReasons.length > 0 ? '2px solid var(--accent-gold)' : '1px solid var(--border-color)' }}>
                                 <div style={{ width: '100%', minWidth: 0, overflow: 'hidden' }}>
                                     <h3 style={{ margin: 0, fontSize: 'clamp(1.05rem, 1.8vw, 1.35rem)', fontWeight: 700, textAlign: 'center', textTransform: 'capitalize', wordBreak: 'break-word', lineHeight: 1.25 }}>
                                         {monthName} {currentYear}
                                     </h3>
-                                    
+                                    {luckyReasons.length > 0 && (
+                                        <div style={{ color: 'var(--accent-gold)', marginTop: '8px', fontSize: '0.82rem', textAlign: 'left', background: 'rgba(212, 175, 55, 0.1)', padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(212, 175, 55, 0.3)', wordBreak: 'break-word' }}>
+                                            <div style={{ fontWeight: 700, marginBottom: '2px', textAlign: 'center' }}>✨ {t('Lucky Month!')}</div>
+                                            <ul style={{ margin: 0, paddingLeft: '14px', color: 'var(--text-main)', lineHeight: 1.35 }}>
+                                                {luckyReasons.map((reason, i) => <li key={i}>{reason}</li>)}
+                                            </ul>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div style={{
@@ -722,9 +816,28 @@ export default function Calendar() {
                         const uYear = reduceCycle(selectedYear);
                         const eSign = getEarthSign(selectedYear, 6, 1); // majority of the year
 
+                        let luckyReasons: React.ReactNode[] = [];
                         let eYearColor = 'inherit';
                         if (exportedProfile) {
-                            
+                            const lastTwo = selectedYear % 100;
+                            const firstTwo = Math.floor(selectedYear / 100);
+                            const yearSumOfTwo = firstTwo + lastTwo;
+                            const personAge = selectedYear - exportedProfile.year;
+                            const flippedAge = personAge > 0 ? parseInt(personAge.toString().split('').reverse().join('')) : -1;
+                            const { base: b, flipped: f } = exportedProfile.luckyNumber;
+
+                            if (lastTwo === b || lastTwo === f) {
+                                luckyReasons.push(language === 'en' ? <span>Year ending (<strong>{lastTwo}</strong>) matches <strong>{b}/{f}</strong></span> : <span>La fin de l'année (<strong>{lastTwo}</strong>) correspond à <strong>{b}/{f}</strong></span>);
+                            }
+                            if (yearSumOfTwo === b || yearSumOfTwo === f) {
+                                luckyReasons.push(language === 'en' ? <span>Year double-digit sum (<strong>{firstTwo}+{lastTwo}={yearSumOfTwo}</strong>) matches <strong>{b}/{f}</strong></span> : <span>La somme de l'année (<strong>{firstTwo}+{lastTwo}={yearSumOfTwo}</strong>) correspond à <strong>{b}/{f}</strong></span>);
+                            }
+                            if (personAge === b || personAge === f) {
+                                luckyReasons.push(language === 'en' ? <span>You turn <strong>{personAge}</strong> this year</span> : <span>Vous aurez <strong>{personAge}</strong> ans cette année</span>);
+                            }
+                            if (flippedAge === b || flippedAge === f) {
+                                luckyReasons.push(language === 'en' ? <span>Your flipped age (<strong>{flippedAge}</strong>) matches <strong>{b}/{f}</strong></span> : <span>Votre âge inversé (<strong>{flippedAge}</strong>) correspond à <strong>{b}/{f}</strong></span>);
+                            }
 
                             const emCompat = checkEarthSignCompatibility(exportedProfile.earthSign, eSign);
                             if (emCompat === 'Enemy') eYearColor = 'var(--accent-red)';
@@ -732,12 +845,19 @@ export default function Calendar() {
                         }
 
                         return (
-                            <div className="card matrix-details-card" style={{ border: '1px solid var(--border-color)' }}>
+                            <div className="card matrix-details-card" style={{ border: luckyReasons.length > 0 ? '2px solid var(--accent-gold)' : '1px solid var(--border-color)' }}>
                                 <div style={{ width: '100%', minWidth: 0, overflow: 'hidden' }}>
                                     <h3 style={{ margin: 0, fontSize: 'clamp(1.05rem, 1.8vw, 1.35rem)', fontWeight: 700, textAlign: 'center', wordBreak: 'break-word' }}>
                                         {t('Year')} {selectedYear}
                                     </h3>
-                                    
+                                    {luckyReasons.length > 0 && (
+                                        <div style={{ color: 'var(--accent-gold)', marginTop: '8px', fontSize: '0.82rem', textAlign: 'left', background: 'rgba(212, 175, 55, 0.1)', padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(212, 175, 55, 0.3)', wordBreak: 'break-word' }}>
+                                            <div style={{ fontWeight: 700, marginBottom: '2px', textAlign: 'center' }}>✨ {t('Lucky Year!')}</div>
+                                            <ul style={{ margin: 0, paddingLeft: '14px', color: 'var(--text-main)', lineHeight: 1.35 }}>
+                                                {luckyReasons.map((reason, i) => <li key={i}>{reason}</li>)}
+                                            </ul>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div style={{

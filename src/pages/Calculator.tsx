@@ -1364,13 +1364,23 @@ export default function Calculator() {
                             <LockedBox size={32} />
                         </div>
 
-                        {/* Lucky Number Card - Locked */}
+                        {/* Lucky Number Card */}
                         <div className="card" style={{
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
                             padding: 'clamp(8px, 2vw, var(--spacing-xl)) clamp(4px, 1vw, var(--spacing-lg))',
-                            border: '1px solid var(--border-color)', minHeight: '130px'
+                            textAlign: 'center',
+                            border: `2px dashed var(--accent-gold)`,
+                            minHeight: '130px'
                         }}>
-                            <LockedBox size={32} />
+                            <div style={{ fontSize: 'clamp(0.5rem, 2vw, 0.8rem)', textTransform: 'uppercase', color: 'var(--text-secondary)', fontWeight: 600, letterSpacing: '0.05em', marginBottom: 'var(--spacing-sm)', whiteSpace: 'nowrap' }}>
+                                {t('Lucky #')}
+                            </div>
+                            <div style={{ fontSize: 'clamp(1.2rem, 5vw, 2.8rem)', fontWeight: 800, color: 'var(--accent-gold)', lineHeight: 1 }}>
+                                {reading.luckyNumber.base !== reading.luckyNumber.flipped ? `${reading.luckyNumber.base},${reading.luckyNumber.flipped}` : reading.luckyNumber.base}
+                            </div>
                         </div>
 
                         {/* Pinnacle Card - Locked */}
