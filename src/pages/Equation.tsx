@@ -591,19 +591,7 @@ export default function Equation() {
                 position: 'relative',
                 marginBottom: 'var(--spacing-2xl)'
             }}>
-                {/* Decorative glow effect */}
-                <div style={{
-                    position: 'absolute',
-                    top: '-10%',
-                    right: '-10%',
-                    width: '140px',
-                    height: '140px',
-                    borderRadius: '50%',
-                    background: 'var(--accent-gold)',
-                    filter: 'blur(80px)',
-                    opacity: 0.08,
-                    pointerEvents: 'none'
-                }} />
+
 
                 <form onSubmit={handleSearch} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xl)' }}>
                     

@@ -51,17 +51,18 @@ export default function Calculator() {
     const yearInputRef = useRef<HTMLInputElement>(null);
 
     // Current date default (stored as strings to allow empty states and padding)
+    const today = new Date();
     const [month, setMonth] = useState<any>(() => {
         const stored = localStorage.getItem('profileMonth');
-        return stored ? stored : '01';
+        return stored ? stored : String(today.getMonth() + 1).padStart(2, '0');
     });
     const [day, setDay] = useState<any>(() => {
         const stored = localStorage.getItem('profileDay');
-        return stored ? stored : '01';
+        return stored ? stored : String(today.getDate()).padStart(2, '0');
     });
     const [year, setYear] = useState<any>(() => {
         const stored = localStorage.getItem('profileYear');
-        return stored ? stored : '2000';
+        return stored ? stored : String(today.getFullYear());
     });
 
     // Main Search state
