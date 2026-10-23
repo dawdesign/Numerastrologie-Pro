@@ -567,8 +567,8 @@ export default function Equation() {
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '560px', margin: '0 auto' }}>
                     {language === 'en'
-                        ? 'Find specific dates matching exact Numerology (Lifepath, Secondary Energy) and Astrology (Earth Year, Earth Month, Sky Sign) filters within a designated timeframe.'
-                        : 'Trouvez des dates spécifiques selon les filtres précis de Numérologie (Chemin de vie, Énergie secondaire) et d\'Astrologie (Année de terre, Mois de terre, Signe du ciel).'
+                        ? 'Find specific dates matching exact Numerology (Lifepath, Secondary Energy) and Astrology (Chinese Year, Earth Month, Sky Sign) filters within a designated timeframe.'
+                        : 'Trouvez des dates spécifiques selon les filtres précis de Numérologie (Chemin de vie, Énergie secondaire) et d\'Astrologie (Année chinoise, Mois de terre, Signe du ciel).'
                     }
                 </p>
                 <div style={{ 
