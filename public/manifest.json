@@ -1,0 +1,27 @@
+{
+  "short_name": "Numerastrologie",
+  "name": "Numerastrologie Pro",
+  "description": "Numerastrologie Pro - Ne laissez pas vos choix les plus importants au hasard.",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180"
+    },
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0d0f17",
+  "theme_color": "#0d0f17",
+  "display": "standalone",
+  "orientation": "portrait"
+}
