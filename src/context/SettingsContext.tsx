@@ -126,8 +126,8 @@ const translations: Record<Language, Record<string, string>> = {
     'Lucky Year!': 'Lucky Year!',
     'It was a Lucky Year!': 'It was a Lucky Year!',
     'It was a Lucky Date!': 'It was a Lucky Date!',
-    "set to today's date": "set to today's date",
     'years old': '{age} years old',
+    'Moon Phase': 'Moon Phase',
 
     // Miscellaneous UI
     'Export Profile to Calendar': 'Export Profile to Calendar',
@@ -303,6 +303,7 @@ const translations: Record<Language, Record<string, string>> = {
     'It was a Lucky Date!': 'C\'était une date porte-bonheur !',
     "set to today's date": "Définir à la date d'aujourd'hui",
     'years old': '{age} ans',
+    'Moon Phase': 'Phase lunaire',
 
     // Miscellaneous UI
     'Export Profile to Calendar': 'Exporter vers le calendrier',

@@ -6,6 +6,7 @@ import { getEarthSign, getWesternSign, getEarthMonthSign, checkEarthSignCompatib
 import { checkCompatibility, getNumberCompat } from '../engine/compatibilityEngine';
 import { EarthSignEmoji } from '../components/ZodiacEmoji';
 import { useSettings } from '../context/SettingsContext';
+import { getMoonPhase } from '../engine/moonPhase';
 
 const getCycleColor = (cycle: number | string, profileLp?: number | string) => {
     const cycleNum = typeof cycle === 'string' ? parseInt(cycle.split('/')[0], 10) : cycle;
@@ -111,7 +112,8 @@ export default function Calendar() {
         const earthSign = getEarthSign(currentYear, currentMonth, selectedDay);
         const earthMonthSign = getEarthMonthSign(currentMonth, selectedDay);
         const skySign = getWesternSign(currentMonth, selectedDay);
-        return { lifepath, unreduced, dayReduced, earthSign, earthMonthSign, skySign };
+        const moonPhase = getMoonPhase(currentYear, currentMonth, selectedDay);
+        return { lifepath, unreduced, dayReduced, earthSign, earthMonthSign, skySign, moonPhase };
     }, [selectedDay, currentMonth, currentYear]);
 
     // Compute exported profile data
@@ -353,11 +355,14 @@ export default function Calendar() {
                                         cellBorder = '3px solid var(--text-main)';
                                     }
 
+                                    const dayMoon = getMoonPhase(currentYear, currentMonth, day);
+
                                     return (
                                         <div
                                             key={day}
                                             onClick={() => setSelectedDay(day)}
                                             className="matrix-day-cell"
+                                            title={`${language === 'fr' ? dayMoon.nameFr : dayMoon.nameEn} (${Math.round(dayMoon.fraction * 100)}%)`}
                                             style={{
                                                 cursor: 'pointer',
                                                 borderRadius: 'var(--radius-md)',
@@ -369,6 +374,22 @@ export default function Calendar() {
                                                 overflow: 'hidden'
                                             }}
                                         >
+                                            {/* Moon Phase Emoji */}
+                                            <span 
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: '2px',
+                                                    right: '3px',
+                                                    fontSize: 'clamp(0.55rem, 0.95vw, 0.75rem)',
+                                                    lineHeight: 1,
+                                                    opacity: 0.9,
+                                                    pointerEvents: 'none',
+                                                    filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.4))'
+                                                }}
+                                            >
+                                                {dayMoon.emoji}
+                                            </span>
+
                                             <div style={{ fontSize: 'clamp(0.8rem, 1.5vw, 1rem)', fontWeight: 700, lineHeight: 1, zIndex: 1 }}>{day}</div>
 
                                             <div style={{
@@ -684,7 +705,7 @@ export default function Calendar() {
                                     </div>
                                 </div>
 
-                                {exportedProfile ? (() => {
+                                 {exportedProfile ? (() => {
                                     const pCycles = calculatePersonalCycles(exportedProfile.month, exportedProfile.day, currentMonth, selectedDay, currentYear);
                                     const age = calculateAge({ year: exportedProfile.year, month: exportedProfile.month, day: exportedProfile.day }, new Date(currentYear, currentMonth - 1, selectedDay || 1));
                                     return (
@@ -716,6 +737,27 @@ export default function Calendar() {
                                         </div>
                                     );
                                 })() : null}
+
+                                {/* Moon Phase - Bottom of Date Info Box */}
+                                <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    marginTop: exportedProfile ? '10px' : 'auto',
+                                    paddingTop: '10px',
+                                    borderTop: '1px solid var(--border-color)',
+                                    color: 'var(--text-secondary)',
+                                    fontSize: '0.85rem'
+                                }}>
+                                    <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>{dayReading.moonPhase.emoji}</span>
+                                    <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>
+                                        {language === 'fr' ? dayReading.moonPhase.nameFr : dayReading.moonPhase.nameEn}
+                                    </span>
+                                    <span style={{ fontSize: '0.78rem', opacity: 0.65 }}>
+                                        ({Math.round(dayReading.moonPhase.fraction * 100)}%)
+                                    </span>
+                                </div>
                             </div>
                         );
                     })()}
