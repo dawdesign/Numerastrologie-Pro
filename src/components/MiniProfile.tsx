@@ -140,30 +140,6 @@ export default function MiniProfile({ label, subLabel, month, day, year, onMonth
 
             <div className="card" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px', gap: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <select
-                        value={month}
-                        onChange={(e) => onMonthChange(parseInt(e.target.value, 10))}
-                        style={{
-                            appearance: 'none',
-                            fontSize: '2rem',
-                            color: 'var(--text-secondary)',
-                            background: 'transparent',
-                            border: 'none',
-                            outline: 'none',
-                            cursor: 'pointer',
-                            textAlign: 'center',
-                            fontFamily: 'inherit'
-                        }}
-                    >
-                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                            <option key={m} value={m}>{m.toString().padStart(2, '0')}</option>
-                        ))}
-                    </select>
-                </div>
-                
-                <div style={{ fontSize: '2rem', fontWeight: 300, color: 'var(--border-color)' }}>/</div>
-                
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <input
                         type="number"
                         value={day}
@@ -185,6 +161,30 @@ export default function MiniProfile({ label, subLabel, month, day, year, onMonth
                             fontFamily: 'inherit'
                         }}
                     />
+                </div>
+                
+                <div style={{ fontSize: '2rem', fontWeight: 300, color: 'var(--border-color)' }}>/</div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <select
+                        value={month}
+                        onChange={(e) => onMonthChange(parseInt(e.target.value, 10))}
+                        style={{
+                            appearance: 'none',
+                            fontSize: '2rem',
+                            color: 'var(--text-secondary)',
+                            background: 'transparent',
+                            border: 'none',
+                            outline: 'none',
+                            cursor: 'pointer',
+                            textAlign: 'center',
+                            fontFamily: 'inherit'
+                        }}
+                    >
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                            <option key={m} value={m}>{m.toString().padStart(2, '0')}</option>
+                        ))}
+                    </select>
                 </div>
                 
                 <div style={{ fontSize: '2rem', fontWeight: 300, color: 'var(--border-color)' }}>/</div>

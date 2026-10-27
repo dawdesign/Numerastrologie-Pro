@@ -111,25 +111,6 @@ export default function Calculator() {
         });
     }, []);
 
-    const handleMonthInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let valRaw = e.target.value.replace(/\D/g, '');
-        if (valRaw.length > 2) {
-            valRaw = valRaw.slice(0, 2);
-        }
-        setMonth(valRaw);
-        setSelectedEntityName('');
-        setEndDate(null);
-        setIsExactDateUnknown(false);
-
-        // Auto-tab to Day
-        if (valRaw.length === 2 || (valRaw.length === 1 && parseInt(valRaw, 10) >= 2)) {
-            dayInputRef.current?.focus();
-            setTimeout(() => {
-                dayInputRef.current?.select();
-            }, 0);
-        }
-    };
-
     const handleDayInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let valRaw = e.target.value.replace(/\D/g, '');
         if (valRaw.length > 2) {
@@ -140,8 +121,27 @@ export default function Calculator() {
         setEndDate(null);
         setIsExactDateUnknown(false);
 
-        // Auto-tab to Year
+        // Auto-tab to Month
         if (valRaw.length === 2 || (valRaw.length === 1 && parseInt(valRaw, 10) >= 4)) {
+            monthInputRef.current?.focus();
+            setTimeout(() => {
+                monthInputRef.current?.select();
+            }, 0);
+        }
+    };
+
+    const handleMonthInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let valRaw = e.target.value.replace(/\D/g, '');
+        if (valRaw.length > 2) {
+            valRaw = valRaw.slice(0, 2);
+        }
+        setMonth(valRaw);
+        setSelectedEntityName('');
+        setEndDate(null);
+        setIsExactDateUnknown(false);
+
+        // Auto-tab to Year
+        if (valRaw.length === 2 || (valRaw.length === 1 && parseInt(valRaw, 10) >= 2)) {
             yearInputRef.current?.focus();
             setTimeout(() => {
                 yearInputRef.current?.select();
@@ -160,39 +160,39 @@ export default function Calculator() {
         setIsExactDateUnknown(false);
     };
 
-    const handleMonthInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleDayInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === '/' || e.key === 'Tab') {
             e.preventDefault();
-            dayInputRef.current?.focus();
+            monthInputRef.current?.focus();
             setTimeout(() => {
-                dayInputRef.current?.select();
+                monthInputRef.current?.select();
             }, 0);
         }
     };
 
-    const handleDayInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleMonthInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === '/' || e.key === 'Tab') {
             e.preventDefault();
             yearInputRef.current?.focus();
             setTimeout(() => {
                 yearInputRef.current?.select();
             }, 0);
-        } else if (e.key === 'Backspace' && !day) {
+        } else if (e.key === 'Backspace' && !month) {
             e.preventDefault();
-            const monthStr = month.toString();
-            const nextMonth = monthStr.slice(0, -1);
-            setMonth(nextMonth);
-            monthInputRef.current?.focus();
+            const dayStr = day.toString();
+            const nextDay = dayStr.slice(0, -1);
+            setDay(nextDay);
+            dayInputRef.current?.focus();
         }
     };
 
     const handleYearInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Backspace' && !year) {
             e.preventDefault();
-            const dayStr = day.toString();
-            const nextDay = dayStr.slice(0, -1);
-            setDay(nextDay);
-            dayInputRef.current?.focus();
+            const monthStr = month.toString();
+            const nextMonth = monthStr.slice(0, -1);
+            setMonth(nextMonth);
+            monthInputRef.current?.focus();
         }
     };
 
@@ -1083,6 +1083,37 @@ export default function Calculator() {
 
             {/* Middle: Date Selector Box */}
             <div className="card" style={{ width: '100%', maxWidth: '700px', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 'var(--spacing-xl) var(--spacing-lg) 38px var(--spacing-lg)', gap: 'var(--spacing-xl)', position: 'relative' }}>
+                {/* Day */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    {isExactDateUnknown ? (
+                        <div style={{ fontSize: 'clamp(1.8rem, 8vw, 2.5rem)', color: 'var(--text-tertiary)', textAlign: 'center', minWidth: '60px' }}>?</div>
+                    ) : (
+                        <input
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            ref={dayInputRef}
+                            value={day}
+                            onChange={handleDayInputChange}
+                            onKeyDown={handleDayInputKeyDown}
+                            onFocus={(e) => e.target.select()}
+                            placeholder="DD"
+                            style={{
+                                fontSize: 'clamp(1.8rem, 8vw, 2.5rem)',
+                                color: 'var(--text-secondary)',
+                                width: '60px',
+                                background: 'transparent',
+                                border: 'none',
+                                outline: 'none',
+                                textAlign: 'center',
+                                fontFamily: 'inherit'
+                            }}
+                        />
+                    )}
+                </div>
+
+                <div style={{ fontSize: 'clamp(1.8rem, 8vw, 2.5rem)', fontWeight: 300, color: 'var(--border-color)' }}>/</div>
+
                 {/* Month */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
                     {isExactDateUnknown ? (
@@ -1158,37 +1189,6 @@ export default function Calculator() {
                             </select>
                         )}
                     </div>
-                </div>
-
-                <div style={{ fontSize: 'clamp(1.8rem, 8vw, 2.5rem)', fontWeight: 300, color: 'var(--border-color)' }}>/</div>
-
-                {/* Day */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    {isExactDateUnknown ? (
-                        <div style={{ fontSize: 'clamp(1.8rem, 8vw, 2.5rem)', color: 'var(--text-tertiary)', textAlign: 'center', minWidth: '60px' }}>?</div>
-                    ) : (
-                        <input
-                            type="text"
-                            inputMode="numeric"
-                            pattern="[0-9]*"
-                            ref={dayInputRef}
-                            value={day}
-                            onChange={handleDayInputChange}
-                            onKeyDown={handleDayInputKeyDown}
-                            onFocus={(e) => e.target.select()}
-                            placeholder="DD"
-                            style={{
-                                fontSize: 'clamp(1.8rem, 8vw, 2.5rem)',
-                                color: 'var(--text-secondary)',
-                                width: '60px',
-                                background: 'transparent',
-                                border: 'none',
-                                outline: 'none',
-                                textAlign: 'center',
-                                fontFamily: 'inherit'
-                            }}
-                        />
-                    )}
                 </div>
 
                 <div style={{ fontSize: 'clamp(1.8rem, 8vw, 2.5rem)', fontWeight: 300, color: 'var(--border-color)' }}>/</div>
@@ -1419,16 +1419,11 @@ export default function Calculator() {
                                         while in a <strong>{reading.endCycles.pYear}</strong> personal year.
                                     </>
                                 )}
-                                {reading.endCycles.isLuckyEndYear && (
-                                    <div style={{ marginTop: 'var(--spacing-sm)', color: 'var(--accent-gold)', fontWeight: 600, fontSize: '1rem' }}>
-                                        <span style={{ marginRight: '8px' }}>✨</span> {t('It was a Lucky Year!')}
-                                    </div>
-                                )}
-                                {reading.endCycles.isLuckyEndDay && (
-                                    <div style={{ marginTop: '4px', color: 'var(--accent-gold)', fontWeight: 600, fontSize: '1rem' }}>
-                                        <span style={{ marginRight: '8px' }}>✨</span> {t('It was a Lucky Date!')}
-                                    </div>
-                                )}
+                                 {reading.endCycles.isLuckyEndDay && (
+                                     <div style={{ marginTop: 'var(--spacing-sm)', color: 'var(--accent-gold)', fontWeight: 600, fontSize: '1rem' }}>
+                                         <span style={{ marginRight: '8px' }}>✨</span> {t('It was a Lucky Date!')}
+                                     </div>
+                                 )}
                             </div>
                         ) : (
                             <>
