@@ -1,9 +1,8 @@
 import LockedBox from '../components/LockedBox';
 import { useState, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { calculateLifePath, reduceNumber, MASTER_NUMBERS, calculateLuckyNumber, calculatePersonalCycles, reduceCycle, calculateAge } from '../engine/numerology';
+import { calculateLifePath, reduceNumber, MASTER_NUMBERS, calculateLuckyNumber, calculatePersonalCycles, reduceCycle, calculateAge, isLuckyDateMatch } from '../engine/numerology';
 import { getEarthSign, getWesternSign, getEarthMonthSign, checkEarthSignCompatibility } from '../engine/astrology';
-import { checkCompatibility, getNumberCompat } from '../engine/compatibilityEngine';
 import { EarthSignEmoji } from '../components/ZodiacEmoji';
 import { useSettings } from '../context/SettingsContext';
 import { getMoonPhase } from '../engine/moonPhase';
@@ -12,25 +11,17 @@ const getCycleColor = (cycle: number | string, profileLp?: number | string) => {
     const cycleNum = typeof cycle === 'string' ? parseInt(cycle.split('/')[0], 10) : cycle;
     if (cycleNum === 11) {
         if (profileLp !== undefined) {
-            const compat = getNumberCompat(profileLp, 11);
-            if (compat === 'Best' || compat === 'Good' || compat === 'MS') {
-                return 'var(--accent-light-green)';
-            }
-            if (compat === 'Enem' || compat === 'Bad') {
-                return 'var(--accent-red)';
-            }
+            const lp = typeof profileLp === 'string' ? parseInt(profileLp.split('/')[0], 10) : profileLp;
+            if (lp === 1 || lp === 3 || lp === 7 || lp === 11 || lp === 22 || lp === 33) return 'var(--accent-light-green)';
+            if (lp === 9) return 'var(--accent-red)';
         }
         return 'inherit';
     }
     if (cycleNum === 22) {
         if (profileLp !== undefined) {
-            const compat = getNumberCompat(profileLp, 22);
-            if (compat === 'Best' || compat === 'Good' || compat === 'MS') {
-                return 'var(--accent-light-green)';
-            }
-            if (compat === 'Enem' || compat === 'Bad') {
-                return 'var(--accent-red)';
-            }
+            const lp = typeof profileLp === 'string' ? parseInt(profileLp.split('/')[0], 10) : profileLp;
+            if (lp === 3 || lp === 6 || lp === 7 || lp === 8 || lp === 11 || lp === 22 || lp === 33) return 'var(--accent-light-green)';
+            if (lp === 5 || lp === 9) return 'var(--accent-red)';
         }
         return 'inherit';
     }
@@ -54,6 +45,7 @@ export default function Calendar() {
     const [selectedDay, setSelectedDay] = useState(today.getDate());
     const [selectedMonth, setSelectedMonth] = useState(today.getMonth() + 1);
     const [selectedYear, setSelectedYear] = useState(today.getFullYear());
+
 
     // Generate matrix for the current month
     const calendarDays = useMemo(() => {
@@ -134,29 +126,6 @@ export default function Calendar() {
         return { month: pm, day: pd, year: py, lifepath, unreduced, earthSign, luckyNumber, skySign, name };
     }, [profileMonth, profileDay, profileYear, profileName]);
 
-    const getCompatColor = (match: string, ownVal?: number | string, otherVal?: number | string) => {
-        if (match.startsWith('var(') || match.startsWith('#')) return match;
-
-        if (ownVal !== undefined && otherVal !== undefined) {
-            const ownReduced = typeof ownVal === 'string' ? parseInt(ownVal.split('/')[0], 10) : ownVal;
-            const otherReduced = typeof otherVal === 'string' ? parseInt(otherVal.split('/')[0], 10) : otherVal;
-            if (match === 'MS') {
-                if (ownReduced === 1 && (otherReduced === 6 || otherReduced === 8)) {
-                    return 'var(--accent-dark-green)';
-                }
-                return ''; // Neutral
-            }
-        }
-
-        if (match === 'MS') {
-            return '';
-        }
-        if (match === 'Best') return 'var(--accent-light-green)';
-        if (match === 'Good' || match === 'Trine' || match === 'Friend' || match === 'Same') return 'var(--accent-dark-green)';
-        if (match === 'Enem' || match === 'Bad' || match === 'Enemy') return 'var(--accent-red)';
-        if (match === '50') return 'var(--accent-yellow)';
-        return 'var(--text-main)';
-    };
 
     // Helper to determine day color based on compatibility
     const getDailyColorStyle = (_day: number): { background?: string, color?: string, border?: string } => { return {}; };
@@ -219,26 +188,28 @@ export default function Calendar() {
                             e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
                         }}
                     >
-                        {/* Left: Calendar Icon + Title & Formatted Date */}
+                        {/* Left: Title & Formatted Date with Calendar Icon */}
                         <div className="exported-profile-left">
-                            <span style={{ fontSize: 'clamp(1.2rem, 3.5vw, 1.6rem)', lineHeight: 1, flexShrink: 0 }}>🗓️</span>
                             <div className="exported-profile-left-texts">
                                 <span className="exported-profile-label">
                                     {language === 'fr' ? 'PROFIL EXPORTÉ' : 'EXPORTED PROFILE'}
                                 </span>
-                                <span className="exported-profile-date">
-                                    {(() => {
-                                        try {
-                                            return new Date(exportedProfile.year, exportedProfile.month - 1, exportedProfile.day).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', {
-                                                day: 'numeric',
-                                                month: 'long',
-                                                year: 'numeric'
-                                            });
-                                        } catch {
-                                            return `${exportedProfile.day} / ${exportedProfile.month} / ${exportedProfile.year}`;
-                                        }
-                                    })()}
-                                </span>
+                                <div className="exported-profile-date">
+                                    <span style={{ fontSize: '16px', lineHeight: 1, display: 'inline-flex', alignItems: 'center' }}>🗓️</span>
+                                    <span>
+                                        {(() => {
+                                            try {
+                                                return new Date(exportedProfile.year, exportedProfile.month - 1, exportedProfile.day).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', {
+                                                    day: 'numeric',
+                                                    month: 'long',
+                                                    year: 'numeric'
+                                                });
+                                            } catch {
+                                                return `${exportedProfile.day} / ${exportedProfile.month} / ${exportedProfile.year}`;
+                                            }
+                                        })()}
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
@@ -249,9 +220,9 @@ export default function Calendar() {
                                 <span className="exported-profile-label">
                                     {language === 'fr' ? 'CHEMIN DE VIE' : 'LIFE PATH'}
                                 </span>
-                                <span className="exported-profile-stat-val" style={{ fontSize: 'clamp(0.95rem, 2.8vw, 1.15rem)', fontWeight: 800 }}>
+                                <div className="exported-profile-stat-val" style={{ fontSize: 'clamp(0.95rem, 2.8vw, 1.15rem)', fontWeight: 800 }}>
                                     {exportedProfile.lifepath}
-                                </span>
+                                </div>
                             </div>
 
                             {/* Signe de terre */}
@@ -281,7 +252,7 @@ export default function Calendar() {
                         <button className="btn btn-outline" style={{ padding: 'clamp(4px, 1vw, 6px) clamp(10px, 1.8vw, 14px)', fontSize: 'clamp(0.72rem, 1.8vw, 0.85rem)' }} onClick={prevView}>&larr; {t('Prev')}</button>
                         <div style={{ display: 'flex', gap: 'clamp(4px, 1vw, var(--spacing-sm))', alignItems: 'center' }}>
                             {viewMode === 'Days' && (
-                                <select className="input-field" style={{ padding: 'clamp(4px, 1vw, 6px)', fontSize: 'clamp(0.72rem, 1.8vw, 0.85rem)', maxWidth: 'clamp(80px, 25vw, 150px)' }} value={currentMonth} onChange={e => { setCurrentMonth(parseInt(e.target.value)); }}>
+                                <select className="input-field" style={{ padding: 'clamp(4px, 1vw, 6px)', fontSize: 'clamp(0.72rem, 1.8vw, 0.85rem)', maxWidth: 'clamp(80px, 25vw, 150px)' }} value={currentMonth} onChange={e => { setCurrentMonth(parseInt(e.target.value)); setSelectedMonth(parseInt(e.target.value)); }}>
                                     {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
                                         <option key={m} value={m}>{new Date(2000, m - 1, 1).toLocaleString(language === 'fr' ? 'fr-FR' : 'en-US', { month: 'short' })}</option>
                                     ))}
@@ -294,7 +265,11 @@ export default function Calendar() {
                                     style={{ width: 'clamp(60px, 15vw, 90px)', padding: 'clamp(4px, 1vw, 6px)', fontSize: 'clamp(0.72rem, 1.8vw, 0.85rem)' }}
                                     value={currentYear}
                                     onFocus={(e) => e.target.select()}
-                                    onChange={e => { setCurrentYear(parseInt(e.target.value) || 2024); }}
+                                    onChange={e => {
+                                        const val = parseInt(e.target.value) || 2024;
+                                        setCurrentYear(val);
+                                        setSelectedYear(val);
+                                    }}
                                 />
                             )}
                             {viewMode === 'Years' && (
@@ -340,7 +315,8 @@ export default function Calendar() {
                                         isLucky = unreduced === exportedProfile.luckyNumber.base || unreduced === exportedProfile.luckyNumber.flipped ||
                                             day === exportedProfile.luckyNumber.base || day === exportedProfile.luckyNumber.flipped ||
                                             todaysLucky.base === exportedProfile.luckyNumber.base || todaysLucky.base === exportedProfile.luckyNumber.flipped ||
-                                            yearSum === exportedProfile.luckyNumber.base || yearSum === exportedProfile.luckyNumber.flipped;
+                                            yearSum === exportedProfile.luckyNumber.base || yearSum === exportedProfile.luckyNumber.flipped ||
+                                            isLuckyDateMatch(currentMonth, day, exportedProfile.luckyNumber);
                                     }
 
                                     const cellStyle = getDailyColorStyle(day);
@@ -449,7 +425,11 @@ export default function Calendar() {
                                 return (
                                     <div
                                         key={m}
-                                        onClick={() => setSelectedMonth(m)}
+                                        onClick={() => {
+                                            setSelectedMonth(m);
+                                            setCurrentMonth(m);
+                                            setViewMode('Days');
+                                        }}
                                         className="matrix-month-cell"
                                         style={{
                                             cursor: 'pointer',
@@ -517,7 +497,11 @@ export default function Calendar() {
                                 return (
                                     <div
                                         key={y}
-                                        onClick={() => setSelectedYear(y)}
+                                        onClick={() => {
+                                            setSelectedYear(y);
+                                            setCurrentYear(y);
+                                            setViewMode('Months');
+                                        }}
                                         className="matrix-year-cell"
                                         style={{
                                             cursor: 'pointer',
@@ -557,19 +541,29 @@ export default function Calendar() {
                         <button
                             id="calendar-toggle-years"
                             className={`btn ${viewMode === 'Years' ? 'btn-primary' : 'btn-outline'}`}
-                            onClick={() => setViewMode('Years')}
+                            onClick={() => {
+                                setCurrentYear(selectedYear);
+                                setViewMode('Years');
+                            }}
                             style={{ padding: '6px 14px', borderRadius: 'var(--radius-full)', fontSize: '0.85rem' }}
                         >{t('Years')}</button>
                         <button
                             id="calendar-toggle-months"
                             className={`btn ${viewMode === 'Months' ? 'btn-primary' : 'btn-outline'}`}
-                            onClick={() => setViewMode('Months')}
+                            onClick={() => {
+                                setCurrentYear(selectedYear);
+                                setViewMode('Months');
+                            }}
                             style={{ padding: '6px 14px', borderRadius: 'var(--radius-full)', fontSize: '0.85rem' }}
                         >{t('Months')}</button>
                         <button
                             id="calendar-toggle-days"
                             className={`btn ${viewMode === 'Days' ? 'btn-primary' : 'btn-outline'}`}
-                            onClick={() => setViewMode('Days')}
+                            onClick={() => {
+                                setCurrentYear(selectedYear);
+                                setCurrentMonth(selectedMonth);
+                                setViewMode('Days');
+                            }}
                             style={{ padding: '6px 14px', borderRadius: 'var(--radius-full)', fontSize: '0.85rem' }}
                         >{t('Days')}</button>
                     </div>
@@ -584,11 +578,6 @@ export default function Calendar() {
                         let luckyReasons: React.ReactNode[] = [];
 
                         if (exportedProfile) {
-                            const compat = checkCompatibility(
-                                { m: exportedProfile.month, d: exportedProfile.day, y: exportedProfile.year },
-                                { m: currentMonth, d: selectedDay, y: currentYear },
-                                language
-                            );
 
                             const todaysLucky = calculateLuckyNumber(currentMonth, selectedDay, currentYear);
                             const { base: b, flipped: f } = exportedProfile.luckyNumber;
@@ -608,9 +597,15 @@ export default function Calendar() {
                             if (ySumActual === b || ySumActual === f) {
                                 luckyReasons.push(language === 'en' ? <span>Year double-digit sum (<strong>{y1}+{y2}={ySumActual}</strong>) matches <strong>{b}/{f}</strong></span> : <span>La somme de l'année (<strong>{y1}+{y2}={ySumActual}</strong>) correspond à <strong>{b}/{f}</strong></span>);
                             }
+                            if (isLuckyDateMatch(currentMonth, selectedDay, exportedProfile.luckyNumber)) {
+                                const formattedD = selectedDay.toString().padStart(2, '0');
+                                const formattedM = currentMonth.toString().padStart(2, '0');
+                                luckyReasons.push(language === 'en' ? <span>Calendar date (<strong>{formattedD}/{formattedM}</strong> or <strong>{formattedM}/{formattedD}</strong>) matches lucky number <strong>{b}/{f}</strong></span> : <span>La date calendaire (<strong>{formattedD}/{formattedM}</strong> ou <strong>{formattedM}/{formattedD}</strong>) correspond au numéro de chance <strong>{b}/{f}</strong></span>);
+                            }
 
-                            // Earth Sign specific match
-                            detailEarthColor = getCompatColor(compat.astroMatch);
+                            const emCompat = checkEarthSignCompatibility(exportedProfile.earthSign, dayReading.earthSign);
+                            if (emCompat === 'Enemy') detailEarthColor = 'var(--accent-red)';
+                            else if (emCompat === 'Friend' || emCompat === 'Soulmate' || emCompat === 'Same') detailEarthColor = 'var(--accent-dark-green)';
 
                             // Sky Sign specific match
                             const exportedSkySign = exportedProfile.skySign || getWesternSign(exportedProfile.month, exportedProfile.day);

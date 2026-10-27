@@ -2,9 +2,8 @@ import { Lock } from 'lucide-react';
 import LockedBox from '../components/LockedBox';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { calculateLifePath, reduceNumber, MASTER_NUMBERS, calculatePersonalCycles, calculateLuckyNumber, calculateUniversalCycles, reduceCycle, calculateAge } from '../engine/numerology';
-import { checkCompatibility, getNumberCompat, isAstroEnemy, isAstroTrine, getZodiacCompat } from '../engine/compatibilityEngine';
-import { getEarthSign, getWesternSign, WESTERN_SIGNS, getEarthMonthSign, EARTH_SIGNS } from '../engine/astrology';
+import { calculateLifePath, reduceNumber, MASTER_NUMBERS, calculatePersonalCycles, calculateLuckyNumber, calculateUniversalCycles, reduceCycle, calculateAge, isLuckyDateMatch } from '../engine/numerology';
+import { getEarthSign, getWesternSign, WESTERN_SIGNS, getEarthMonthSign, EARTH_SIGNS, checkEarthSignCompatibility } from '../engine/astrology';
 import { COUNTRIES_FOUNDING_DATA } from '../data/countriesData';
 import { CLUBS_FOUNDING_DATA } from '../data/clubsData';
 import { WIKI_EARTH_SIGNS } from '../data/wikiData';
@@ -31,15 +30,6 @@ function getElement(lunarYear: number, t: (k: string) => string): { name: string
     return { name: '', emoji: '' };
 }
 
-// Also define the compare Universal cycles type
-type CompareUniversalCyclesResult = {
-    universalYear: number;
-    universalMonth: number;
-    universalDay: number | string;
-    yearColor?: string;
-    monthColor?: string;
-    dayColor?: string;
-};
 
 export default function Calculator() {
     const navigate = useNavigate();
@@ -196,55 +186,8 @@ export default function Calculator() {
         }
     };
 
-    // Compare state
-    const [compareMonth] = useState<number>(() => {
-        const stored = localStorage.getItem('compareMonth');
-        return stored ? parseInt(stored) : 1;
-    });
-    const [compareDay] = useState<number>(() => {
-        const stored = localStorage.getItem('compareDay');
-        return stored ? parseInt(stored) : 1;
-    });
-    const [compareYear] = useState<any>(() => {
-        const stored = localStorage.getItem('compareYear');
-        return stored ? parseInt(stored) : 2000;
-    });
-    const [isComparing, setIsComparing] = useState<boolean>(() => {
-        const stored = localStorage.getItem('isComparing');
-        return stored === 'true';
-    });
-
-    // Compare Search state
-    const [compareQuery] = useState(() => localStorage.getItem('compareQuery') || '');
-    
-    
-    
-    const [selectedCompareEntityName] = useState(() => localStorage.getItem('compareName') || '');
-    const selectedCompareEntityNameRef = useRef(selectedCompareEntityName);
-    selectedCompareEntityNameRef.current = selectedCompareEntityName;
-
-    
-    
-
+    const [isComparing, setIsComparing] = useState<boolean>(false);
     const [showPersonalCycles, setShowPersonalCycles] = useState(false);
-
-    // Location Earth Sign for compatibility comparison
-    const [compareLocationSign] = useState<string | null>(() => {
-        return localStorage.getItem('compareLocationSign') || null;
-    });
-    
-
-    useEffect(() => {
-        if (compareLocationSign) {
-            localStorage.setItem('compareLocationSign', compareLocationSign);
-        } else {
-            localStorage.removeItem('compareLocationSign');
-        }
-    }, [compareLocationSign]);
-
-    
-    
-    
 
     const getCompatColor = (match: string, ownVal?: number | string, otherVal?: number | string) => {
         if (match.startsWith('var(') || match.startsWith('#')) return match;
@@ -274,25 +217,17 @@ export default function Calculator() {
         const cycleNum = typeof cycle === 'string' ? parseInt(cycle.split('/')[0], 10) : cycle;
         if (cycleNum === 11) {
             if (profileLp !== undefined) {
-                const compat = getNumberCompat(profileLp, 11);
-                if (compat === 'Best' || compat === 'Good' || compat === 'MS') {
-                    return 'var(--accent-light-green)';
-                }
-                if (compat === 'Enem' || compat === 'Bad') {
-                    return 'var(--accent-red)';
-                }
+                const lp = typeof profileLp === 'string' ? parseInt(profileLp.split('/')[0], 10) : profileLp;
+                if (lp === 1 || lp === 3 || lp === 7 || lp === 11 || lp === 22 || lp === 33) return 'var(--accent-light-green)';
+                if (lp === 9) return 'var(--accent-red)';
             }
             return 'inherit';
         }
         if (cycleNum === 22) {
             if (profileLp !== undefined) {
-                const compat = getNumberCompat(profileLp, 22);
-                if (compat === 'Best' || compat === 'Good' || compat === 'MS') {
-                    return 'var(--accent-light-green)';
-                }
-                if (compat === 'Enem' || compat === 'Bad') {
-                    return 'var(--accent-red)';
-                }
+                const lp = typeof profileLp === 'string' ? parseInt(profileLp.split('/')[0], 10) : profileLp;
+                if (lp === 3 || lp === 6 || lp === 7 || lp === 8 || lp === 11 || lp === 22 || lp === 33) return 'var(--accent-light-green)';
+                if (lp === 5 || lp === 9) return 'var(--accent-red)';
             }
             return 'inherit';
         }
@@ -427,14 +362,6 @@ export default function Calculator() {
         }
     }, [t, language]);
 
-    useEffect(() => {
-        localStorage.setItem('compareMonth', compareMonth.toString());
-        localStorage.setItem('compareDay', compareDay.toString());
-        localStorage.setItem('compareYear', compareYear.toString());
-        localStorage.setItem('compareQuery', compareQuery);
-        localStorage.setItem('compareName', selectedCompareEntityName);
-        localStorage.setItem('isComparing', isComparing.toString());
-    }, [compareMonth, compareDay, compareYear, compareQuery, selectedCompareEntityName, isComparing]);
 
     useEffect(() => {
         localStorage.setItem('profileMonth', month.toString());
@@ -572,7 +499,6 @@ export default function Calculator() {
     let reading = null;
 
     const isYearValid = typeof year === 'number' || (typeof year === 'string' && year !== '' && year !== '-');
-    const isCompareYearValid = typeof compareYear === 'number' || (typeof compareYear === 'string' && compareYear !== '' && compareYear !== '-');
 
     if (!isExactDateUnknown && month && day && year && isYearValid) {
         const y = typeof year === 'string' ? parseInt(year, 10) : year;
@@ -626,124 +552,40 @@ export default function Calculator() {
             const isLuckyCalendarDay = now.getDate() === luckyNumber.base || now.getDate() === luckyNumber.flipped;
             const todaysLucky = calculateLuckyNumber(now.getMonth() + 1, now.getDate(), now.getFullYear());
             const isDateLuckyMatch = todaysLucky.base === luckyNumber.base || todaysLucky.base === luckyNumber.flipped;
+            const isLuckyDigitsDate = isLuckyDateMatch(now.getMonth() + 1, now.getDate(), luckyNumber);
 
-            const isLuckyToday = isLuckyUniversalDay || isLuckyCalendarDay || isDateLuckyMatch;
+            const isLuckyToday = isLuckyUniversalDay || isLuckyCalendarDay || isDateLuckyMatch || isLuckyDigitsDate;
 
             // Compare to Today's values
-            const todayLP = calculateLifePath(now.getMonth() + 1, now.getDate(), now.getFullYear()).lifepath;
-            const todayDayReduced = reduceNumber(now.getDate());
             const todayEarthYearSign = getEarthSign(now.getFullYear(), now.getMonth() + 1, now.getDate());
             const todayEarthMonthSign = getEarthMonthSign(now.getMonth() + 1, now.getDate());
             const todaySkySign = getWesternSign(now.getMonth() + 1, now.getDate());
 
-            let lpVsTodayColor = '';
-            let dayVsTodayColor = '';
             let yearSignVsTodayColor = '';
-            let monthSignVsTodayColor = '';
-
-            let lpVsTodayCompat = '';
-            let dayVsTodayCompat = '';
             let yearSignVsTodayCompat = '';
-            let monthSignVsTodayCompat = '';
 
             const isToday = y === now.getFullYear() && m === (now.getMonth() + 1) && d === now.getDate();
             const earthMonthSignObj = getEarthMonthSign(m, d);
             const isSameEarthMonthAsToday = !isToday && earthMonthSignObj.name === todayEarthMonthSign.name;
             const isSameSkySignAsToday = !isToday && skySign.name === todaySkySign.name;
 
-            if (isSameEarthMonthAsToday) {
-                monthSignVsTodayColor = 'var(--accent-dark-green)';
-                monthSignVsTodayCompat = 'Same';
-            }
-
             if (!endDate && showCompatOutlines) {
                 if (!isToday) {
-                    const lpCompat = getNumberCompat(lifepath, todayLP);
-                    if (lpCompat !== 'Neutral') {
-                        lpVsTodayColor = getCompatColor(lpCompat, lifepath, todayLP);
-                        lpVsTodayCompat = lpCompat;
-                    }
-
-                    const dayCompat = getNumberCompat(dayReduced, todayDayReduced);
-                    if (dayCompat !== 'Neutral') {
-                        dayVsTodayColor = getCompatColor(dayCompat, dayReduced, todayDayReduced);
-                        dayVsTodayCompat = dayCompat;
-                    }
-
-                    const yearCompatZ = getZodiacCompat(earthSign.name, todayEarthYearSign.name);
-                    if (yearCompatZ === 'Same' || yearCompatZ === 'Trine') {
-                        yearSignVsTodayColor = getCompatColor(yearCompatZ);
-                        yearSignVsTodayCompat = yearCompatZ;
-                    }
-
-                    if (!isSameEarthMonthAsToday) {
-                        const monthCompatZ = getZodiacCompat(earthMonthSignObj.name, todayEarthMonthSign.name);
-                        if (monthCompatZ !== 'Neutral') {
-                            monthSignVsTodayColor = getCompatColor(monthCompatZ);
-                            monthSignVsTodayCompat = monthCompatZ;
-                        }
+                    const earthCompat = checkEarthSignCompatibility(earthSign, todayEarthYearSign);
+                    if (earthCompat === 'Same' || earthCompat === 'Friend') {
+                        const label = earthCompat === 'Friend' ? 'Trine' : 'Same';
+                        yearSignVsTodayColor = getCompatColor(label);
+                        yearSignVsTodayCompat = label;
                     }
                 }
             }
 
-            let compatibilityResult = null;
-            let compareUniversalCycles: CompareUniversalCyclesResult | null = null;
-
-            if (isComparing && isCompareYearValid) {
-                const cY = typeof compareYear === 'string' ? parseInt(compareYear, 10) : compareYear;
-                // Test compatibility against Universal cycles of the target date instead of their personal cycles.
-                const cmpUC = calculateUniversalCycles(compareMonth, compareDay, cY);
-                compareUniversalCycles = { ...cmpUC };
-
-                compatibilityResult = checkCompatibility(
-                    { m: m, d: d, y: y },
-                    { m: compareMonth, d: compareDay, y: cY },
-                    language,
-                    compareLocationSign
-                );
-
-                // Additionally calculate compat colors for Universal Year, Month, Day against user's Life Path
-                compareUniversalCycles!.yearColor = getCompatColor(getNumberCompat(lifepath, compareUniversalCycles!.universalYear), lifepath, compareUniversalCycles!.universalYear);
-                compareUniversalCycles!.monthColor = getCompatColor(getNumberCompat(lifepath, compareUniversalCycles!.universalMonth), lifepath, compareUniversalCycles!.universalMonth);
-                compareUniversalCycles!.dayColor = getCompatColor(getNumberCompat(lifepath, compareUniversalCycles!.universalDay), lifepath, compareUniversalCycles!.universalDay);
-            }
-
-            let isSameSkySignAsCompare = false;
-            if (isComparing && isCompareYearValid && compareMonth && compareDay) {
-                const compareSkySign = getWesternSign(Number(compareMonth), Number(compareDay));
-                isSameSkySignAsCompare = compareSkySign.name === skySign.name;
-            }
-            const isSameSkySign = isSameSkySignAsToday || isSameSkySignAsCompare;
+            const isSameSkySign = isSameSkySignAsToday;
 
             let endCycles = null;
             if (endDate) {
-                const endUniversalYear = reduceCycle(endDate.year);
-
                 const endEarthSign = getEarthSign(endDate.year, endDate.month, endDate.day);
-                const yearCompat = getNumberCompat(lifepath, endUniversalYear);
-
-                let yearType = 'neutral';
-                let yearExplanation = '';
-
-                // Enemy aspects take precedence over friendly aspects
-                if (isAstroEnemy(earthSign.name, endEarthSign.name)) {
-                    yearType = 'enemy';
-                    yearExplanation = language === 'fr' ? `(Année du ${t(endEarthSign.name)})` : `(Year of the ${endEarthSign.name})`;
-                } else if (yearCompat === 'Enem' || yearCompat === 'Bad') {
-                    yearType = 'enemy';
-                    yearExplanation = language === 'fr' ? `(une année universelle ${endUniversalYear})` : `(a universal ${endUniversalYear} year)`;
-                } else if (yearCompat === 'Best' || yearCompat === 'Good' || yearCompat === 'MS') {
-                    yearType = 'friendly';
-                    yearExplanation = language === 'fr' ? `(une année universelle ${endUniversalYear})` : `(a universal ${endUniversalYear} year)`;
-                } else if (isAstroTrine(earthSign.name, endEarthSign.name)) {
-                    yearType = 'friendly';
-                    yearExplanation = language === 'fr' ? `(Année du ${t(endEarthSign.name)})` : `(Year of the ${endEarthSign.name})`;
-                } else {
-                    yearExplanation = language === 'fr' ? `(une année universelle ${endUniversalYear})` : `(a universal ${endUniversalYear} year)`; // default fallback
-                }
-
                 const pCycles = calculatePersonalCycles(m, d, endDate.month, endDate.day, endDate.year);
-
 
                 const endYearLastTwo = endDate.year % 100;
                 const isLuckyEndYear = endYearLastTwo === luckyNumber.base || endYearLastTwo === luckyNumber.flipped;
@@ -752,23 +594,18 @@ export default function Calculator() {
                 const endsLucky = calculateLuckyNumber(endDate.month, endDate.day, endDate.year);
                 const isLuckyEndDay = endPYearRaw === luckyNumber.base || endPYearRaw === luckyNumber.flipped ||
                     endDate.day === luckyNumber.base || endDate.day === luckyNumber.flipped ||
-                    endsLucky.base === luckyNumber.base || endsLucky.base === luckyNumber.flipped;
+                    endsLucky.base === luckyNumber.base || endsLucky.base === luckyNumber.flipped ||
+                    isLuckyDateMatch(endDate.month, endDate.day, luckyNumber);
 
                 const endUC = calculateUniversalCycles(endDate.month, endDate.day, endDate.year);
 
                 endCycles = {
                     year: endDate.year,
                     endEarthSign,
-                    yearType,
-                    yearExplanation,
                     uYear: endUC.universalYear,
                     uMonth: endUC.universalMonth,
                     uDay: endUC.universalDay,
                     pYear: pCycles.personalYear,
-                    uYearColor: getCompatColor(getNumberCompat(lifepath, endUC.universalYear), lifepath, endUC.universalYear),
-                    uMonthColor: getCompatColor(getNumberCompat(lifepath, endUC.universalMonth), lifepath, endUC.universalMonth),
-                    uDayColor: getCompatColor(getNumberCompat(lifepath, endUC.universalDay), lifepath, endUC.universalDay),
-                    pYearColor: getCycleColor(pCycles.personalYear, lifepath),
                     isLuckyEndYear,
                     isLuckyEndDay
                 };
@@ -789,23 +626,14 @@ export default function Calculator() {
                 skySignIndex,
                 isSameSkySign,
                 isSameSkySignAsToday,
-                isSameSkySignAsCompare,
                 earthSignIndex,
                 dayOfYear,
                 weekOfYear,
                 element,
                 personalCycles,
                 universalCycles,
-                compatibilityResult,
-                compareUniversalCycles,
                 yearSignVsTodayColor,
-                monthSignVsTodayColor,
-                dayVsTodayColor,
-                lpVsTodayColor,
                 yearSignVsTodayCompat,
-                monthSignVsTodayCompat,
-                dayVsTodayCompat,
-                lpVsTodayCompat,
                 currentYear,
                 endCycles,
                 luckyNumber,

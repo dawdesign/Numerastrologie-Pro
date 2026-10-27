@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useSettings } from '../context/SettingsContext';
 import { WIKI_NUMBERS } from '../data/wikiData';
-import { getNumberCompat } from '../engine/compatibilityEngine';
 import { NUMEROLOGY_DESCRIPTIONS } from '../engine/personalityData';
 import WikiAstrologyWheel from '../components/WikiAstrologyWheel';
 import WikiSkyWheel from '../components/WikiSkyWheel';
@@ -55,28 +54,21 @@ const PRO_SHOWN_COMPAT: Record<number, { best: number[], friends: number[], enem
     33: { best: [], friends: [11, 22, 33], enemy: [] }
 };
 
-function getOriginalRelationsForNumber(num: number) {
-    const best: number[] = [];
-    const friendly: number[] = [];
-    const enemy: number[] = [];
-
-    NUMBERS_LIST.forEach(other => {
-        const c = getNumberCompat(num, other);
-        if (c === 'Best') {
-            best.push(other);
-        } else if (c === 'Good') {
-            friendly.push(other);
-        } else if (c === 'MS') {
-            if ((num === 1 && (other === 6 || other === 8)) || (num === 6 && other === 1) || (num === 8 && other === 1)) {
-                friendly.push(other);
-            }
-        } else if (c === 'Enem' || c === 'Bad') {
-            enemy.push(other);
-        }
-    });
-
-    return { best, friendly, enemy };
-}
+// Number of locked items in each category
+const LOCKED_COMPAT_COUNTS: Record<number, { best: number, friends: number, enemy: number }> = {
+    1: { best: 1, friends: 4, enemy: 0 },
+    2: { best: 0, friends: 3, enemy: 1 },
+    3: { best: 1, friends: 6, enemy: 0 },
+    4: { best: 3, friends: 1, enemy: 1 },
+    5: { best: 2, friends: 2, enemy: 2 },
+    6: { best: 1, friends: 4, enemy: 1 },
+    7: { best: 1, friends: 1, enemy: 3 },
+    8: { best: 3, friends: 3, enemy: 2 },
+    9: { best: 1, friends: 1, enemy: 5 },
+    11: { best: 2, friends: 1, enemy: 0 },
+    22: { best: 1, friends: 3, enemy: 2 },
+    33: { best: 1, friends: 2, enemy: 1 }
+};
 
 export default function Wiki() {
     const { t, language } = useSettings();
@@ -314,18 +306,18 @@ export default function Wiki() {
                             {(WIKI_NUMBERS[language] || WIKI_NUMBERS['en']).map((number) => {
                                 const numVal = parseInt(number.id, 10);
                                 const isExpanded = !!expandedNumbers[number.id];
-                                const orig = getOriginalRelationsForNumber(numVal);
                                 const config = PRO_SHOWN_COMPAT[numVal] || { best: [], friends: [], enemy: [] };
+                                const lockedCounts = LOCKED_COMPAT_COUNTS[numVal] || { best: 0, friends: 0, enemy: 0 };
 
                                 // Shown lists
                                 const shownBest = config.best;
                                 const shownFriends = config.friends;
                                 const shownEnemy = config.enemy;
 
-                                // Locked box counts: total in original minus shown count
-                                const lockedBestCount = Math.max(0, orig.best.length - shownBest.length);
-                                const lockedFriendsCount = Math.max(0, orig.friendly.length - shownFriends.length);
-                                const lockedEnemyCount = Math.max(0, orig.enemy.length - shownEnemy.length);
+                                // Locked box counts
+                                const lockedBestCount = lockedCounts.best;
+                                const lockedFriendsCount = lockedCounts.friends;
+                                const lockedEnemyCount = lockedCounts.enemy;
 
                                 const descriptions = NUMEROLOGY_DESCRIPTIONS[language as 'en' | 'fr']?.[numVal] || [];
                                 const isMaster = numVal > 9;

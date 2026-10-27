@@ -30,7 +30,6 @@ const translations: Record<Language, Record<string, string>> = {
     'Today': 'Today',
     'Recent Searches': 'Recent Searches',
     'Search for celebrities or countries...': 'Search for celebrities or countries...',
-    'Numerologie Pro Max by DD22.': 'Numerologie Pro Max by DD22.',
 
     // Navigation / Pages
     'Calculator': 'Calculator',

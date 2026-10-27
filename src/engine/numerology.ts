@@ -253,6 +253,22 @@ export function calculateLuckyNumber(month: number, day: number, year: number): 
 }
 
 /**
+ * Checks if a specific calendar date (month and day) matches the lucky number digits.
+ * E.g., for lucky number 18/81:
+ * - Jan 8 (M=1, D=8) -> matches 01/08 and 08/01
+ * - Aug 1 (M=8, D=1) -> matches 08/01 and 01/08
+ */
+export function isLuckyDateMatch(month: number, day: number, luckyNumber: { base: number, flipped: number, baseStr?: string, flippedStr?: string }): boolean {
+    const bStr = luckyNumber.baseStr || luckyNumber.base.toString().padStart(2, '0');
+    if (bStr.length < 2) return false;
+    const d1 = parseInt(bStr[0], 10);
+    const d2 = parseInt(bStr[1], 10);
+
+    // Date matches if (month === d1 && day === d2) OR (month === d2 && day === d1)
+    return (month === d1 && day === d2) || (month === d2 && day === d1);
+}
+
+/**
  * Calculates current age or age at a specific target date.
  */
 export function calculateAge(birthDate: { year: number, month: number, day: number }, targetDate: Date = new Date()): number {

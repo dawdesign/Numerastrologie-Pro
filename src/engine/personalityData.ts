@@ -34,7 +34,7 @@ export const NUMEROLOGY_DESCRIPTIONS: Record<'en' | 'fr', Record<number, string[
             "Bosseur.",
             "A plusieurs jobs/business en même temps.",
             "A du mal à s’arrêter quand ils démarrent une tâche.",
-            "Les gens paresseux t’insupportent."
+            "Les gens paresseux les insupportent."
         ],
         5: [
             "Voyage beaucoup.",
