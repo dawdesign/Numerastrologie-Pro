@@ -428,7 +428,6 @@ export default function Calendar() {
                                         onClick={() => {
                                             setSelectedMonth(m);
                                             setCurrentMonth(m);
-                                            setViewMode('Days');
                                         }}
                                         className="matrix-month-cell"
                                         style={{
@@ -499,8 +498,6 @@ export default function Calendar() {
                                         key={y}
                                         onClick={() => {
                                             setSelectedYear(y);
-                                            setCurrentYear(y);
-                                            setViewMode('Months');
                                         }}
                                         className="matrix-year-cell"
                                         style={{

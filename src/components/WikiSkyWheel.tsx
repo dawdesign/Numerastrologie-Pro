@@ -15,21 +15,181 @@ export interface SkyWheelSign {
         en: string;
         fr: string;
     };
+    bodyParts: {
+        en: string[];
+        fr: string[];
+    };
 }
 
 export const SKY_WHEEL_SIGNS: SkyWheelSign[] = [
-    { id: 0, name: 'Aries', nameFr: 'BÉLIER', glyph: '♈', number: 1, element: 'fire', elementEmoji: '🔥', dates: { en: 'Mar 21 – Apr 19', fr: '21 Mar – 19 Avr' } },
-    { id: 1, name: 'Taurus', nameFr: 'TAUREAU', glyph: '♉', number: 2, element: 'earth', elementEmoji: '🌍', dates: { en: 'Apr 20 – May 20', fr: '20 Avr – 20 Mai' } },
-    { id: 2, name: 'Gemini', nameFr: 'GÉMEAUX', glyph: '♊', number: 3, element: 'air', elementEmoji: '💨', dates: { en: 'May 21 – Jun 20', fr: '21 Mai – 20 Juin' } },
-    { id: 3, name: 'Cancer', nameFr: 'CANCER', glyph: '♋', number: 4, element: 'water', elementEmoji: '💧', dates: { en: 'Jun 21 – Jul 22', fr: '21 Juin – 22 Juil' } },
-    { id: 4, name: 'Leo', nameFr: 'LION', glyph: '♌', number: 5, element: 'fire', elementEmoji: '🔥', dates: { en: 'Jul 23 – Aug 22', fr: '23 Juil – 22 Août' } },
-    { id: 5, name: 'Virgo', nameFr: 'VIERGE', glyph: '♍', number: 6, element: 'earth', elementEmoji: '🌍', dates: { en: 'Aug 23 – Sep 22', fr: '23 Août – 22 Sept' } },
-    { id: 6, name: 'Libra', nameFr: 'BALANCE', glyph: '♎', number: 7, element: 'air', elementEmoji: '💨', dates: { en: 'Sep 23 – Oct 22', fr: '23 Sept – 22 Oct' } },
-    { id: 7, name: 'Scorpio', nameFr: 'SCORPION', glyph: '♏', number: 8, element: 'water', elementEmoji: '💧', dates: { en: 'Oct 23 – Nov 21', fr: '23 Oct – 21 Nov' } },
-    { id: 8, name: 'Sagittarius', nameFr: 'SAGITTAIRE', glyph: '♐', number: 9, element: 'fire', elementEmoji: '🔥', dates: { en: 'Nov 22 – Dec 21', fr: '22 Nov – 21 Déc' } },
-    { id: 9, name: 'Capricorn', nameFr: 'CAPRICORNE', glyph: '♑', number: 10, element: 'earth', elementEmoji: '🌍', dates: { en: 'Dec 22 – Jan 19', fr: '22 Déc – 19 Jan' } },
-    { id: 10, name: 'Aquarius', nameFr: 'VERSEAU', glyph: '♒', number: 11, element: 'air', elementEmoji: '💨', dates: { en: 'Jan 20 – Feb 18', fr: '20 Jan – 18 Fév' } },
-    { id: 11, name: 'Pisces', nameFr: 'POISSONS', glyph: '♓', number: 12, element: 'water', elementEmoji: '💧', dates: { en: 'Feb 19 – Mar 20', fr: '19 Fév – 20 Mar' } },
+    { 
+        id: 0, 
+        name: 'Aries', 
+        nameFr: 'BÉLIER', 
+        glyph: '♈', 
+        number: 1, 
+        element: 'fire', 
+        elementEmoji: '🔥', 
+        dates: { en: 'Mar 21 – Apr 19', fr: '21 Mar – 19 Avr' },
+        bodyParts: {
+            en: ['Head', 'Hair'],
+            fr: ['Tête', 'Cheveux']
+        }
+    },
+    { 
+        id: 1, 
+        name: 'Taurus', 
+        nameFr: 'TAUREAU', 
+        glyph: '♉', 
+        number: 2, 
+        element: 'earth', 
+        elementEmoji: '🌍', 
+        dates: { en: 'Apr 20 – May 20', fr: '20 Avr – 20 Mai' },
+        bodyParts: {
+            en: ['Neck'],
+            fr: ['Cou']
+        }
+    },
+    { 
+        id: 2, 
+        name: 'Gemini', 
+        nameFr: 'GÉMEAUX', 
+        glyph: '♊', 
+        number: 3, 
+        element: 'air', 
+        elementEmoji: '💨', 
+        dates: { en: 'May 21 – Jun 20', fr: '21 Mai – 20 Juin' },
+        bodyParts: {
+            en: ['Shoulders', 'Arms'],
+            fr: ['Épaules', 'Bras']
+        }
+    },
+    { 
+        id: 3, 
+        name: 'Cancer', 
+        nameFr: 'CANCER', 
+        glyph: '♋', 
+        number: 4, 
+        element: 'water', 
+        elementEmoji: '💧', 
+        dates: { en: 'Jun 21 – Jul 22', fr: '21 Juin – 22 Juil' },
+        bodyParts: {
+            en: ['Chest', 'Breasts'],
+            fr: ['Poitrine', 'Seins']
+        }
+    },
+    { 
+        id: 4, 
+        name: 'Leo', 
+        nameFr: 'LION', 
+        glyph: '♌', 
+        number: 5, 
+        element: 'fire', 
+        elementEmoji: '🔥', 
+        dates: { en: 'Jul 23 – Aug 22', fr: '23 Juil – 22 Août' },
+        bodyParts: {
+            en: ['Lower back'],
+            fr: ['Bas du dos']
+        }
+    },
+    { 
+        id: 5, 
+        name: 'Virgo', 
+        nameFr: 'VIERGE', 
+        glyph: '♍', 
+        number: 6, 
+        element: 'earth', 
+        elementEmoji: '🌍', 
+        dates: { en: 'Aug 23 – Sep 22', fr: '23 Août – 22 Sept' },
+        bodyParts: {
+            en: ['Abdomen', 'Appendix'],
+            fr: ['Abdomen', 'Appendice']
+        }
+    },
+    { 
+        id: 6, 
+        name: 'Libra', 
+        nameFr: 'BALANCE', 
+        glyph: '♎', 
+        number: 7, 
+        element: 'air', 
+        elementEmoji: '💨', 
+        dates: { en: 'Sep 23 – Oct 22', fr: '23 Sept – 22 Oct' },
+        bodyParts: {
+            en: ['Buttocks', 'Kidneys'],
+            fr: ['Fesses', 'Reins']
+        }
+    },
+    { 
+        id: 7, 
+        name: 'Scorpio', 
+        nameFr: 'SCORPION', 
+        glyph: '♏', 
+        number: 8, 
+        element: 'water', 
+        elementEmoji: '💧', 
+        dates: { en: 'Oct 23 – Nov 21', fr: '23 Oct – 21 Nov' },
+        bodyParts: {
+            en: ['Genitals'],
+            fr: ['Organes génitaux']
+        }
+    },
+    { 
+        id: 8, 
+        name: 'Sagittarius', 
+        nameFr: 'SAGITTAIRE', 
+        glyph: '♐', 
+        number: 9, 
+        element: 'fire', 
+        elementEmoji: '🔥', 
+        dates: { en: 'Nov 22 – Dec 21', fr: '22 Nov – 21 Déc' },
+        bodyParts: {
+            en: ['Thighs'],
+            fr: ['Cuisses']
+        }
+    },
+    { 
+        id: 9, 
+        name: 'Capricorn', 
+        nameFr: 'CAPRICORNE', 
+        glyph: '♑', 
+        number: 10, 
+        element: 'earth', 
+        elementEmoji: '🌍', 
+        dates: { en: 'Dec 22 – Jan 19', fr: '22 Déc – 19 Jan' },
+        bodyParts: {
+            en: ['Knees'],
+            fr: ['Genoux']
+        }
+    },
+    { 
+        id: 10, 
+        name: 'Aquarius', 
+        nameFr: 'VERSEAU', 
+        glyph: '♒', 
+        number: 11, 
+        element: 'air', 
+        elementEmoji: '💨', 
+        dates: { en: 'Jan 20 – Feb 18', fr: '20 Jan – 18 Fév' },
+        bodyParts: {
+            en: ['Calves'],
+            fr: ['Mollets']
+        }
+    },
+    { 
+        id: 11, 
+        name: 'Pisces', 
+        nameFr: 'POISSONS', 
+        glyph: '♓', 
+        number: 12, 
+        element: 'water', 
+        elementEmoji: '💧', 
+        dates: { en: 'Feb 19 – Mar 20', fr: '19 Fév – 20 Mar' },
+        bodyParts: {
+            en: ['Feet', 'Ankles'],
+            fr: ['Pieds', 'Chevilles']
+        }
+    },
 ];
 
 export interface ElementTheme {
@@ -450,6 +610,7 @@ export default function WikiSkyWheel() {
     const activeBullets = SKY_SIGN_DESCRIPTIONS[language === 'fr' ? 'fr' : 'en']?.[activeSign.name] || [];
     const activeSignName = language === 'fr' ? t(activeSign.name) : activeSign.name;
     const elementNameLocalized = language === 'fr' ? activeTheme.nameFr : activeTheme.name;
+    const activeBodyParts = activeSign.bodyParts?.[language === 'fr' ? 'fr' : 'en'] || [];
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--spacing-xl)', width: '100%' }}>
@@ -877,6 +1038,50 @@ export default function WikiSkyWheel() {
                             </li>
                         ))}
                     </ul>
+
+                    {/* Associated Body Parts in Element-Colored Boxes */}
+                    {activeBodyParts.length > 0 && (
+                        <div style={{ 
+                            marginTop: 'var(--spacing-md)', 
+                            paddingTop: 'var(--spacing-sm)', 
+                            borderTop: '1px solid var(--border-color)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '8px'
+                        }}>
+                            <div style={{ 
+                                fontSize: '0.78rem', 
+                                fontWeight: 700, 
+                                textTransform: 'uppercase', 
+                                letterSpacing: '0.06em', 
+                                color: 'var(--text-tertiary)' 
+                            }}>
+                                {language === 'fr' ? 'Parties du corps associées' : 'Associated Body Parts'}
+                            </div>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                {activeBodyParts.map((part, idx) => (
+                                    <span
+                                        key={idx}
+                                        style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            background: activeTheme.badgeBg,
+                                            border: `1px solid ${activeTheme.badgeBorder}`,
+                                            color: activeTheme.color,
+                                            padding: '4px 12px',
+                                            borderRadius: 'var(--radius-md)',
+                                            fontSize: '0.85rem',
+                                            fontWeight: 600,
+                                            letterSpacing: '0.02em',
+                                            boxShadow: `0 2px 8px ${activeTheme.cardBorder}`
+                                        }}
+                                    >
+                                        {part}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
