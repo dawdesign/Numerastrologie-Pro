@@ -114,9 +114,14 @@ export default function WikiAstrologyWheel() {
     const rInnerMin = 50;
 
     // Check relationship categories for any segment index
-    const getSegmentStatus = (idx: number) => {
+    const getSegmentStatus = (idx: number): 'selected' | 'soulmate' | 'friendly' | 'enemy' | 'neutral' => {
         if (idx === selectedIndex) return 'selected';
         
+        // Soulmates (Rat & Ox: index 0 and 1)
+        if ((selectedIndex === 0 && idx === 1) || (selectedIndex === 1 && idx === 0)) {
+            return 'soulmate';
+        }
+
         // Trines (Friendly)
         if (idx === (selectedIndex + 4) % 12 || idx === (selectedIndex + 8) % 12) {
             return 'friendly';
@@ -129,13 +134,21 @@ export default function WikiAstrologyWheel() {
     };
 
     // Calculate segment colors
-    const getSegmentColors = (status: 'selected' | 'friendly' | 'enemy' | 'neutral') => {
+    const getSegmentColors = (status: 'selected' | 'soulmate' | 'friendly' | 'enemy' | 'neutral') => {
         switch (status) {
             case 'selected':
                 return {
                     outer: 'rgba(46, 204, 113, 0.45)', // Richer green
                     middle: 'rgba(46, 204, 113, 0.25)',
                     inner: 'rgba(46, 204, 113, 0.35)',
+                    stroke: '#2ecc71',
+                    strokeWidth: 2
+                };
+            case 'soulmate':
+                return {
+                    outer: 'rgba(46, 204, 113, 0.35)', // Radiant green highlight for soulmate
+                    middle: 'rgba(46, 204, 113, 0.22)',
+                    inner: 'rgba(46, 204, 113, 0.28)',
                     stroke: '#2ecc71',
                     strokeWidth: 2
                 };
@@ -220,7 +233,7 @@ export default function WikiAstrologyWheel() {
                                     key={sign.id} 
                                     onClick={() => handleSelectIndex(i)}
                                     style={{
-                                        filter: status === 'selected' ? 'url(#glow-selected)' : status === 'enemy' ? 'url(#glow-enemy)' : 'none'
+                                        filter: (status === 'selected' || status === 'soulmate') ? 'url(#glow-selected)' : status === 'enemy' ? 'url(#glow-enemy)' : 'none'
                                     }}
                                 >
                                     {/* 1. Outer band (Emoji) */}
@@ -359,6 +372,10 @@ export default function WikiAstrologyWheel() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <div style={{ width: '12px', height: '12px', background: 'rgba(46, 204, 113, 0.45)', border: '1px solid #2ecc71', borderRadius: '3px' }}></div>
                     <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{t('Selected')}</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ width: '12px', height: '12px', background: 'rgba(46, 204, 113, 0.35)', border: '1px solid #2ecc71', borderRadius: '3px' }}></div>
+                    <span style={{ fontWeight: 500, color: 'var(--text-secondary)' }}>{t('Soulmate')}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <div style={{ width: '12px', height: '12px', background: 'rgba(46, 204, 113, 0.2)', border: '1px solid rgba(46, 204, 113, 0.45)', borderRadius: '3px' }}></div>

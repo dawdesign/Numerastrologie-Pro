@@ -146,6 +146,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Additional Dictionary Keys
     'Selected': 'Selected',
+    'Soulmate': 'Soulmate',
     'Friendly (Trine)': 'Friendly (Trine)',
     'Opposite (Enemy)': 'Opposite (Enemy)',
     'Compatible (Same Element)': 'Compatible (Same Element)',
@@ -322,6 +323,7 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Additional Dictionary Keys
     'Selected': 'Sélectionné',
+    'Soulmate': 'Âme Sœur',
     'Friendly (Trine)': 'Amical (Trigone)',
     'Opposite (Enemy)': 'Opposé (Ennemi)',
     'Compatible (Same Element)': 'Compatible (Même Élément)',

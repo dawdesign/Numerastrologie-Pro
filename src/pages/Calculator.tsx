@@ -1330,14 +1330,20 @@ export default function Calculator() {
                                                         </>
                                                     ) : reading.personalCycles.personalYear}
                                                 </div>
-                                                <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '4px' }}>{t('Started on your')} {reading.personalCycles.lastBirthdayYear} {t('birthday')}</div>
+                                                <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '4px' }}>
+                                                    {language === 'fr' 
+                                                        ? `A commencé à l'anniversaire en ${reading.personalCycles.lastBirthdayYear}` 
+                                                        : `${t('Started on your')} ${reading.personalCycles.lastBirthdayYear} ${t('birthday')}`}
+                                                </div>
                                             </div>
 
                                             <div style={{ flex: '1 1 120px', maxWidth: '300px' }}>
                                                 <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>{t('Personal Month')}</div>
                                                 <div style={{ fontSize: '2.5rem', fontWeight: 800, color: getCycleColor(reading.personalCycles.personalMonth, reading.lifepath) }}>{reading.personalCycles.personalMonth}</div>
                                                 <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '4px' }}>
-                                                    {t('Based on')} {new Date(2000, reading.personalCycles.effectiveMonth - 1, 1).toLocaleString(language === 'fr' ? 'fr-FR' : 'en-US', { month: 'long' })} {t('cycle')}
+                                                    {language === 'fr' 
+                                                        ? `Basé sur le cycle ${new Date(2000, reading.personalCycles.effectiveMonth - 1, 1).toLocaleString('fr-FR', { month: 'long' })}` 
+                                                        : `${t('Based on')} ${new Date(2000, reading.personalCycles.effectiveMonth - 1, 1).toLocaleString('en-US', { month: 'long' })} ${t('cycle')}`}
                                                 </div>
                                             </div>
 
