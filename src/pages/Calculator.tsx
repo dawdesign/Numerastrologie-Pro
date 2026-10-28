@@ -107,9 +107,7 @@ export default function Calculator() {
             valRaw = valRaw.slice(0, 2);
         }
         setDay(valRaw);
-        setSelectedEntityName('');
         setEndDate(null);
-        setIsExactDateUnknown(false);
 
         // Auto-tab to Month
         if (valRaw.length === 2 || (valRaw.length === 1 && parseInt(valRaw, 10) >= 4)) {
@@ -126,9 +124,7 @@ export default function Calculator() {
             valRaw = valRaw.slice(0, 2);
         }
         setMonth(valRaw);
-        setSelectedEntityName('');
         setEndDate(null);
-        setIsExactDateUnknown(false);
 
         // Auto-tab to Year
         if (valRaw.length === 2 || (valRaw.length === 1 && parseInt(valRaw, 10) >= 2)) {
@@ -145,9 +141,7 @@ export default function Calculator() {
             valRaw = valRaw.slice(0, 4);
         }
         setYear(valRaw);
-        setSelectedEntityName('');
         setEndDate(null);
-        setIsExactDateUnknown(false);
     };
 
     const handleDayInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -420,8 +414,8 @@ export default function Calculator() {
                     setIsExactDateUnknown(true);
                     setUnknownDateEarthSign(localClub.earthSign);
                     setYear(localClub.year ? localClub.year.toString() : '');
-                    setMonth('01');
-                    setDay('01');
+                    setMonth('');
+                    setDay('');
                 } else {
                     setIsExactDateUnknown(false);
                     setYear(localClub.year ? localClub.year.toString() : '');
@@ -451,8 +445,8 @@ export default function Calculator() {
                     setIsExactDateUnknown(true);
                     setUnknownDateEarthSign(localCountry.earthSign);
                     setYear(localCountry.year ? localCountry.year.toString() : '');
-                    setMonth('01');
-                    setDay('01');
+                    setMonth('');
+                    setDay('');
                 } else {
                     setIsExactDateUnknown(false);
                     setYear(localCountry.year ? localCountry.year.toString() : '');
@@ -489,18 +483,28 @@ export default function Calculator() {
         }
     };
 
-    const earthSignObj = isExactDateUnknown && unknownDateEarthSign
-        ? EARTH_SIGNS.find(s => s.name.toLowerCase() === unknownDateEarthSign.toLowerCase())
+    const isYearValid = typeof year === 'number' || (typeof year === 'string' && year !== '' && year !== '-');
+    const isMonthValid = Boolean(month && !isNaN(parseInt(month, 10)) && parseInt(month, 10) >= 1 && parseInt(month, 10) <= 12);
+    const isDayValid = Boolean(day && !isNaN(parseInt(day, 10)) && parseInt(day, 10) >= 1 && parseInt(day, 10) <= 31);
+    const isFullDateValid = Boolean(isDayValid && isMonthValid && isYearValid);
+
+    const isExactDateUnknownEffective = isExactDateUnknown && !isFullDateValid;
+
+    const yNum = typeof year === 'string' ? parseInt(year, 10) : year;
+    const computedEarthSignName = !isNaN(yNum) && yNum !== 0
+        ? getEarthSign(yNum, 1, 1).name
+        : unknownDateEarthSign;
+
+    const earthSignObj = isExactDateUnknownEffective && computedEarthSignName
+        ? EARTH_SIGNS.find(s => s.name.toLowerCase() === computedEarthSignName.toLowerCase())
         : null;
-    const earthSignWikiInfo = isExactDateUnknown && unknownDateEarthSign
-        ? (WIKI_EARTH_SIGNS[language] || WIKI_EARTH_SIGNS['en'])?.find((s: any) => s.name.toLowerCase() === unknownDateEarthSign.toLowerCase())
+    const earthSignWikiInfo = isExactDateUnknownEffective && computedEarthSignName
+        ? (WIKI_EARTH_SIGNS[language] || WIKI_EARTH_SIGNS['en'])?.find((s: any) => s.name.toLowerCase() === computedEarthSignName.toLowerCase())
         : null;
 
     let reading = null;
 
-    const isYearValid = typeof year === 'number' || (typeof year === 'string' && year !== '' && year !== '-');
-
-    if (!isExactDateUnknown && month && day && year && isYearValid) {
+    if (isFullDateValid) {
         const y = typeof year === 'string' ? parseInt(year, 10) : year;
         const m = typeof month === 'string' ? parseInt(month, 10) : month;
         const d = typeof day === 'string' ? parseInt(day, 10) : day;
@@ -869,7 +873,7 @@ export default function Calculator() {
                 </div>
             )}
 
-            {isExactDateUnknown && selectedEntityName && (
+            {isExactDateUnknownEffective && selectedEntityName && (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', width: '100%', maxWidth: '700px', marginBottom: 'var(--spacing-md)' }}>
                     <div style={{ position: 'absolute', top: 0, left: 0 }}>
                         <button
@@ -913,62 +917,54 @@ export default function Calculator() {
             <div className="card" style={{ width: '100%', maxWidth: '700px', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 'var(--spacing-xl) var(--spacing-lg) 38px var(--spacing-lg)', gap: 'var(--spacing-xl)', position: 'relative' }}>
                 {/* Day */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    {isExactDateUnknown ? (
-                        <div style={{ fontSize: 'clamp(1.8rem, 8vw, 2.5rem)', color: 'var(--text-tertiary)', textAlign: 'center', minWidth: '60px' }}>?</div>
-                    ) : (
-                        <input
-                            type="text"
-                            inputMode="numeric"
-                            pattern="[0-9]*"
-                            ref={dayInputRef}
-                            value={day}
-                            onChange={handleDayInputChange}
-                            onKeyDown={handleDayInputKeyDown}
-                            onFocus={(e) => e.target.select()}
-                            placeholder="DD"
-                            style={{
-                                fontSize: 'clamp(1.8rem, 8vw, 2.5rem)',
-                                color: 'var(--text-secondary)',
-                                width: '60px',
-                                background: 'transparent',
-                                border: 'none',
-                                outline: 'none',
-                                textAlign: 'center',
-                                fontFamily: 'inherit'
-                            }}
-                        />
-                    )}
+                    <input
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        ref={dayInputRef}
+                        value={day}
+                        onChange={handleDayInputChange}
+                        onKeyDown={handleDayInputKeyDown}
+                        onFocus={(e) => e.target.select()}
+                        placeholder={isExactDateUnknownEffective && !day ? "?" : "DD"}
+                        style={{
+                            fontSize: 'clamp(1.8rem, 8vw, 2.5rem)',
+                            color: 'var(--text-secondary)',
+                            width: '60px',
+                            background: 'transparent',
+                            border: 'none',
+                            outline: 'none',
+                            textAlign: 'center',
+                            fontFamily: 'inherit'
+                        }}
+                    />
                 </div>
 
                 <div style={{ fontSize: 'clamp(1.8rem, 8vw, 2.5rem)', fontWeight: 300, color: 'var(--border-color)' }}>/</div>
 
                 {/* Month */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
-                    {isExactDateUnknown ? (
-                        <div style={{ fontSize: 'clamp(1.8rem, 8vw, 2.5rem)', color: 'var(--text-tertiary)', textAlign: 'center', minWidth: '60px' }}>?</div>
-                    ) : (
-                        <input
-                            type="text"
-                            inputMode="numeric"
-                            pattern="[0-9]*"
-                            ref={monthInputRef}
-                            value={month}
-                            onChange={handleMonthInputChange}
-                            onKeyDown={handleMonthInputKeyDown}
-                            onFocus={(e) => e.target.select()}
-                            placeholder="MM"
-                            style={{
-                                fontSize: 'clamp(1.8rem, 8vw, 2.5rem)',
-                                color: 'var(--text-secondary)',
-                                width: '60px',
-                                background: 'transparent',
-                                border: 'none',
-                                outline: 'none',
-                                textAlign: 'center',
-                                fontFamily: 'inherit'
-                            }}
-                        />
-                    )}
+                    <input
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        ref={monthInputRef}
+                        value={month}
+                        onChange={handleMonthInputChange}
+                        onKeyDown={handleMonthInputKeyDown}
+                        onFocus={(e) => e.target.select()}
+                        placeholder={isExactDateUnknownEffective && !month ? "?" : "MM"}
+                        style={{
+                            fontSize: 'clamp(1.8rem, 8vw, 2.5rem)',
+                            color: 'var(--text-secondary)',
+                            width: '60px',
+                            background: 'transparent',
+                            border: 'none',
+                            outline: 'none',
+                            textAlign: 'center',
+                            fontFamily: 'inherit'
+                        }}
+                    />
                     
                     {/* Absolute positioned month selector name label */}
                     <div style={{ 
@@ -986,36 +982,30 @@ export default function Calculator() {
                         fontWeight: 500,
                         cursor: 'pointer'
                     }}>
-                        {isExactDateUnknown ? t('Unknown') : (
-                            month && !isNaN(parseInt(month, 10)) ? new Date(2000, parseInt(month, 10) - 1, 1).toLocaleString(language === 'fr' ? 'fr-FR' : 'en-US', { month: 'long' }) : ''
-                        )}
-                        {!isExactDateUnknown && <span style={{ fontSize: '0.6rem' }}>▼</span>}
+                        {month && !isNaN(parseInt(month, 10)) ? new Date(2000, parseInt(month, 10) - 1, 1).toLocaleString(language === 'fr' ? 'fr-FR' : 'en-US', { month: 'long' }) : t('Unknown')}
+                        <span style={{ fontSize: '0.6rem' }}>▼</span>
                         
-                        {!isExactDateUnknown && (
-                            <select
-                                value={month ? parseInt(month, 10) : 1}
-                                onChange={(e) => {
-                                    setMonth(e.target.value.padStart(2, '0'));
-                                    setSelectedEntityName('');
-                                    setEndDate(null);
-                                    setIsExactDateUnknown(false);
-                                }}
-                                style={{
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    width: '100%',
-                                    height: '100%',
-                                    opacity: 0,
-                                    cursor: 'pointer',
-                                    zIndex: 10
-                                }}
-                            >
-                                {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                                    <option key={m} value={m}>{m.toString().padStart(2, '0')}</option>
-                                ))}
-                            </select>
-                        )}
+                        <select
+                            value={month && !isNaN(parseInt(month, 10)) ? parseInt(month, 10) : 1}
+                            onChange={(e) => {
+                                setMonth(e.target.value.padStart(2, '0'));
+                                setEndDate(null);
+                            }}
+                            style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '100%',
+                                opacity: 0,
+                                cursor: 'pointer',
+                                zIndex: 10
+                            }}
+                        >
+                            {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                                <option key={m} value={m}>{m.toString().padStart(2, '0')}</option>
+                            ))}
+                        </select>
                     </div>
                 </div>
 
@@ -1023,34 +1013,30 @@ export default function Calculator() {
 
                 {/* Year */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    {isExactDateUnknown ? (
-                        <div style={{ fontSize: 'clamp(1.8rem, 8vw, 2.5rem)', color: 'var(--text-tertiary)', textAlign: 'center', minWidth: '60px' }}>{year || '?'}</div>
-                    ) : (
-                        <input
-                            type="text"
-                            inputMode="numeric"
-                            ref={yearInputRef}
-                            value={year}
-                            onChange={handleYearInputChange}
-                            onKeyDown={handleYearInputKeyDown}
-                            onFocus={(e) => e.target.select()}
-                            placeholder="YYYY"
-                            style={{
-                                fontSize: 'clamp(1.8rem, 8vw, 2.5rem)',
-                                color: 'var(--text-secondary)',
-                                width: '100px',
-                                background: 'transparent',
-                                border: 'none',
-                                outline: 'none',
-                                textAlign: 'center',
-                                fontFamily: 'inherit'
-                            }}
-                        />
-                    )}
+                    <input
+                        type="text"
+                        inputMode="numeric"
+                        ref={yearInputRef}
+                        value={year}
+                        onChange={handleYearInputChange}
+                        onKeyDown={handleYearInputKeyDown}
+                        onFocus={(e) => e.target.select()}
+                        placeholder={isExactDateUnknownEffective && !year ? "?" : "YYYY"}
+                        style={{
+                            fontSize: 'clamp(1.8rem, 8vw, 2.5rem)',
+                            color: 'var(--text-secondary)',
+                            width: '100px',
+                            background: 'transparent',
+                            border: 'none',
+                            outline: 'none',
+                            textAlign: 'center',
+                            fontFamily: 'inherit'
+                        }}
+                    />
                 </div>
             </div>
 
-            {isExactDateUnknown && earthSignObj && (
+            {isExactDateUnknownEffective && earthSignObj && (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '700px', marginTop: 'var(--spacing-md)' }}>
                     <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'var(--spacing-xl)', textAlign: 'center', width: '100%', maxWidth: '400px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: 'var(--spacing-md)' }}>
@@ -1247,11 +1233,6 @@ export default function Calculator() {
                                         while in a <strong>{reading.endCycles.pYear}</strong> personal year.
                                     </>
                                 )}
-                                 {reading.endCycles.isLuckyEndDay && (
-                                     <div style={{ marginTop: 'var(--spacing-sm)', color: 'var(--accent-gold)', fontWeight: 600, fontSize: '1rem' }}>
-                                         <span style={{ marginRight: '8px' }}>✨</span> {t('It was a Lucky Date!')}
-                                     </div>
-                                 )}
                             </div>
                         ) : (
                             <>
