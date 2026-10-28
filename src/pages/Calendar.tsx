@@ -1,11 +1,18 @@
 import LockedBox from '../components/LockedBox';
 import { useState, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { calculateLifePath, reduceNumber, MASTER_NUMBERS, calculateLuckyNumber, calculatePersonalCycles, reduceCycle, calculateAge, isLuckyDateMatch } from '../engine/numerology';
+import { calculateLifePath, reduceNumber, MASTER_NUMBERS, calculateLuckyNumber, calculatePersonalCycles, reduceCycle, calculateAge, isLuckyDateMatch, getDayOfYear } from '../engine/numerology';
 import { getEarthSign, getWesternSign, getEarthMonthSign, checkEarthSignCompatibility } from '../engine/astrology';
 import { EarthSignEmoji } from '../components/ZodiacEmoji';
 import { useSettings } from '../context/SettingsContext';
 import { getMoonPhase } from '../engine/moonPhase';
+
+const getOrdinal = (n: number, lang: string) => {
+    if (lang === 'fr') return n + (n === 1 ? "er" : "e");
+    const s = ["th", "st", "nd", "rd"];
+    const v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+};
 
 const getCycleColor = (cycle: number | string, profileLp?: number | string) => {
     const cycleNum = typeof cycle === 'string' ? parseInt(cycle.split('/')[0], 10) : cycle;
@@ -312,10 +319,13 @@ export default function Calendar() {
                                         const y2 = currentYear % 100;
                                         const yearSum = y1 + y2;
 
+                                        const dayOfYearNum = getDayOfYear(currentMonth, day, currentYear);
+
                                         isLucky = unreduced === exportedProfile.luckyNumber.base || unreduced === exportedProfile.luckyNumber.flipped ||
                                             day === exportedProfile.luckyNumber.base || day === exportedProfile.luckyNumber.flipped ||
                                             todaysLucky.base === exportedProfile.luckyNumber.base || todaysLucky.base === exportedProfile.luckyNumber.flipped ||
                                             yearSum === exportedProfile.luckyNumber.base || yearSum === exportedProfile.luckyNumber.flipped ||
+                                            dayOfYearNum === exportedProfile.luckyNumber.base || dayOfYearNum === exportedProfile.luckyNumber.flipped ||
                                             isLuckyDateMatch(currentMonth, day, exportedProfile.luckyNumber);
                                     }
 
@@ -599,6 +609,10 @@ export default function Calendar() {
                                 const formattedM = currentMonth.toString().padStart(2, '0');
                                 luckyReasons.push(language === 'en' ? <span>Calendar date (<strong>{formattedD}/{formattedM}</strong> or <strong>{formattedM}/{formattedD}</strong>) matches lucky number <strong>{b}/{f}</strong></span> : <span>La date calendaire (<strong>{formattedD}/{formattedM}</strong> ou <strong>{formattedM}/{formattedD}</strong>) correspond au numéro de chance <strong>{b}/{f}</strong></span>);
                             }
+                            const dayOfYearSelected = getDayOfYear(currentMonth, selectedDay, currentYear);
+                            if (dayOfYearSelected === b || dayOfYearSelected === f) {
+                                luckyReasons.push(language === 'en' ? <span>Day of the year (<strong>{dayOfYearSelected}th day</strong>) matches <strong>{b}/{f}</strong></span> : <span>Le jour de l'année (<strong>{dayOfYearSelected}ᵉ jour</strong>) correspond à <strong>{b}/{f}</strong></span>);
+                            }
 
                             const emCompat = checkEarthSignCompatibility(exportedProfile.earthSign, dayReading.earthSign);
                             if (emCompat === 'Enemy') detailEarthColor = 'var(--accent-red)';
@@ -612,6 +626,8 @@ export default function Calendar() {
                         }
 
                         const cardBorder = luckyReasons.length > 0 ? '2px solid var(--accent-gold)' : '1px solid var(--border-color)';
+                        const selectedDayOfYear = getDayOfYear(currentMonth, selectedDay, currentYear);
+                        const selectedWeekOfYear = Math.ceil(selectedDayOfYear / 7);
 
                         return (
                             <div className="card matrix-details-card" style={{ border: cardBorder }}>
@@ -619,6 +635,11 @@ export default function Calendar() {
                                     <h3 style={{ margin: 0, fontSize: 'clamp(0.95rem, 1.5vw, 1.2rem)', fontWeight: 700, textAlign: 'center', wordBreak: 'break-word', lineHeight: 1.25 }}>
                                         {new Date(currentYear, currentMonth - 1, selectedDay).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                                     </h3>
+                                    <div style={{ textAlign: 'center', fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px', fontStyle: 'italic', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
+                                        <span>{getOrdinal(selectedDayOfYear, language)} {t('day')}</span>
+                                        <span style={{ opacity: 0.5 }}>•</span>
+                                        <span>{getOrdinal(selectedWeekOfYear, language)} {t('week')}</span>
+                                    </div>
                                     {luckyReasons.length > 0 && (
                                         <div style={{ color: 'var(--accent-gold)', marginTop: '8px', fontSize: '0.82rem', textAlign: 'left', background: 'rgba(212, 175, 55, 0.1)', padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(212, 175, 55, 0.3)', wordBreak: 'break-word' }}>
                                             <div style={{ fontWeight: 700, marginBottom: '2px', textAlign: 'center' }}>✨ {t('Lucky Day!')}</div>

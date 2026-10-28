@@ -2,7 +2,7 @@ import { Lock } from 'lucide-react';
 import LockedBox from '../components/LockedBox';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { calculateLifePath, reduceNumber, MASTER_NUMBERS, calculatePersonalCycles, calculateLuckyNumber, calculateUniversalCycles, reduceCycle, calculateAge, isLuckyDateMatch } from '../engine/numerology';
+import { calculateLifePath, reduceNumber, MASTER_NUMBERS, calculatePersonalCycles, calculateLuckyNumber, calculateUniversalCycles, reduceCycle, calculateAge, isLuckyDateMatch, getDayOfYear } from '../engine/numerology';
 import { getEarthSign, getWesternSign, WESTERN_SIGNS, getEarthMonthSign, EARTH_SIGNS, checkEarthSignCompatibility } from '../engine/astrology';
 import { COUNTRIES_FOUNDING_DATA } from '../data/countriesData';
 import { CLUBS_FOUNDING_DATA } from '../data/clubsData';
@@ -525,9 +525,7 @@ export default function Calculator() {
             startObj.setFullYear(y, 0, 0);
             startObj.setHours(0,0,0,0);
             
-            const diff = dateObj.getTime() - startObj.getTime();
-            const oneDay = 1000 * 60 * 60 * 24;
-            const dayOfYear = Math.floor(diff / oneDay);
+            const dayOfYear = getDayOfYear(m, d, y);
             const weekOfYear = Math.ceil(dayOfYear / 7);
 
             let lunarYear = y;
@@ -557,8 +555,10 @@ export default function Calculator() {
             const todaysLucky = calculateLuckyNumber(now.getMonth() + 1, now.getDate(), now.getFullYear());
             const isDateLuckyMatch = todaysLucky.base === luckyNumber.base || todaysLucky.base === luckyNumber.flipped;
             const isLuckyDigitsDate = isLuckyDateMatch(now.getMonth() + 1, now.getDate(), luckyNumber);
+            const todayDayOfYear = getDayOfYear(now.getMonth() + 1, now.getDate(), now.getFullYear());
+            const isLuckyDayOfYear = todayDayOfYear === luckyNumber.base || todayDayOfYear === luckyNumber.flipped;
 
-            const isLuckyToday = isLuckyUniversalDay || isLuckyCalendarDay || isDateLuckyMatch || isLuckyDigitsDate;
+            const isLuckyToday = isLuckyUniversalDay || isLuckyCalendarDay || isDateLuckyMatch || isLuckyDigitsDate || isLuckyDayOfYear;
 
             // Compare to Today's values
             const todayEarthYearSign = getEarthSign(now.getFullYear(), now.getMonth() + 1, now.getDate());
@@ -596,9 +596,11 @@ export default function Calculator() {
 
                 const endPYearRaw = calculateLifePath(endDate.month, endDate.day, endDate.year).unreduced;
                 const endsLucky = calculateLuckyNumber(endDate.month, endDate.day, endDate.year);
+                const endDayOfYear = getDayOfYear(endDate.month, endDate.day, endDate.year);
                 const isLuckyEndDay = endPYearRaw === luckyNumber.base || endPYearRaw === luckyNumber.flipped ||
                     endDate.day === luckyNumber.base || endDate.day === luckyNumber.flipped ||
                     endsLucky.base === luckyNumber.base || endsLucky.base === luckyNumber.flipped ||
+                    endDayOfYear === luckyNumber.base || endDayOfYear === luckyNumber.flipped ||
                     isLuckyDateMatch(endDate.month, endDate.day, luckyNumber);
 
                 const endUC = calculateUniversalCycles(endDate.month, endDate.day, endDate.year);
@@ -1125,7 +1127,18 @@ export default function Calculator() {
                                         </div>
                                     );
                                 })()}
-                                <div>{getOrdinal(reading.dayOfYear, language)} {t('day')}</div>
+                                {(() => {
+                                    const isLuckyDayOfYear = reading.dayOfYear === reading.luckyNumber.base || reading.dayOfYear === reading.luckyNumber.flipped;
+                                    return (
+                                        <div style={{ 
+                                            color: isLuckyDayOfYear ? 'var(--accent-gold)' : 'inherit', 
+                                            fontWeight: isLuckyDayOfYear ? 600 : 'inherit', 
+                                            fontStyle: isLuckyDayOfYear ? 'normal' : 'italic' 
+                                        }}>
+                                            {getOrdinal(reading.dayOfYear, language)} {t('day')}
+                                        </div>
+                                    );
+                                })()}
                                 <div>{getOrdinal(reading.weekOfYear, language)} {t('week')}</div>
                             </div>
                         </div>
