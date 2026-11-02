@@ -8,6 +8,7 @@ import { COUNTRIES_FOUNDING_DATA } from '../data/countriesData';
 import { CLUBS_FOUNDING_DATA } from '../data/clubsData';
 import { WIKI_EARTH_SIGNS } from '../data/wikiData';
 import { NUMEROLOGY_DESCRIPTIONS, EARTH_SIGN_DESCRIPTIONS, UNREDUCED_LP_DESCRIPTIONS } from '../engine/personalityData';
+import { SKY_SIGN_DESCRIPTIONS } from '../components/WikiSkyWheel';
 import { EarthSignEmoji } from '../components/ZodiacEmoji';
 import { fetchWikiSearch, fetchWikiEntityDetails } from '../engine/wikiFetcher';
 import type { WikiSearchResult } from '../engine/wikiFetcher';
@@ -1471,14 +1472,14 @@ export default function Calculator() {
                                 </ul>
                             </div>
 
-                            {/* Earth Month Traits */}
+                            {/* Sky Sign Traits */}
                             <div style={{ background: 'var(--bg-main)', padding: 'var(--spacing-lg)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                                 <h4 style={{ color: 'var(--text-main)', fontSize: '1rem', marginTop: 0, marginBottom: 'var(--spacing-md)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    {t(reading.earthMonthSign.name)} ({t('Month')}) <span style={{ fontSize: '1.2rem' }}>{reading.earthMonthSign.emoji}</span>
+                                    {t(reading.skySign.name)} ({t('Sky Sign')}) <span style={{ fontSize: '1.2rem' }}>{reading.skySign.emoji}</span>
                                 </h4>
                                 <ul style={{ margin: 0, paddingLeft: 'var(--spacing-lg)', color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                    {EARTH_SIGN_DESCRIPTIONS[language][reading.earthMonthSign.id]?.map((trait, i) => (
-                                        <li key={`earth-month-${i}`}>{trait}</li>
+                                    {SKY_SIGN_DESCRIPTIONS[language][reading.skySign.name]?.map((trait, i) => (
+                                        <li key={`sky-${i}`}>{trait}</li>
                                     ))}
                                 </ul>
                             </div>
