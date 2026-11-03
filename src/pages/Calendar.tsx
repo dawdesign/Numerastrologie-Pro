@@ -520,7 +520,7 @@ export default function Calendar() {
                                             maxWidth: '100%',
                                             overflow: 'hidden'
                                         }}>
-                                            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{language === 'fr' ? 'Année Univ.' : 'Univ. Year'}: <strong>{uYear}</strong></span>
+                                            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{language === 'fr' ? 'Année' : 'Year'} <strong>{uYear}</strong></span>
                                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', flexShrink: 0 }}>
                                                 <EarthSignEmoji sign={eSign} size={13} /> {t(eSign.name).substring(0,3)}
                                             </span>
