@@ -210,33 +210,6 @@ export const NUMEROLOGY_DESCRIPTIONS: Record<'en' | 'fr', Record<number, string[
     }
 };
 
-export const UNREDUCED_LP_DESCRIPTIONS: Record<'en' | 'fr', Record<string, string[]>> = {
-    en: {
-        "19/1": [
-            "Health issues",
-            "Birth defects",
-            "Bad karma from a past life to resolve"
-        ],
-        "28/1": [
-            "Trouble with children",
-            "Difficulties with pregnancy or offspring",
-            "Karma linked to authority and trust"
-        ]
-    },
-    fr: {
-        "19/1": [
-            "Problèmes de santé",
-            "Malformations congénitales",
-            "Mauvais karma d'une vie antérieure à résoudre"
-        ],
-        "28/1": [
-            "Problèmes avec les enfants",
-            "Difficultés de grossesse ou descendance",
-            "Karma lié à l'autorité et à la confiance"
-        ]
-    }
-};
-
 export const EARTH_SIGN_DESCRIPTIONS: Record<'en' | 'fr', Record<number, string[]>> = {
     fr: {
         0: [ // Rat

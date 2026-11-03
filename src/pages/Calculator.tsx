@@ -7,7 +7,7 @@ import { getEarthSign, getWesternSign, WESTERN_SIGNS, getEarthMonthSign, EARTH_S
 import { COUNTRIES_FOUNDING_DATA } from '../data/countriesData';
 import { CLUBS_FOUNDING_DATA } from '../data/clubsData';
 import { WIKI_EARTH_SIGNS } from '../data/wikiData';
-import { NUMEROLOGY_DESCRIPTIONS, EARTH_SIGN_DESCRIPTIONS, UNREDUCED_LP_DESCRIPTIONS } from '../engine/personalityData';
+import { NUMEROLOGY_DESCRIPTIONS, EARTH_SIGN_DESCRIPTIONS } from '../engine/personalityData';
 import { SKY_SIGN_DESCRIPTIONS } from '../components/WikiSkyWheel';
 import { EarthSignEmoji } from '../components/ZodiacEmoji';
 import { fetchWikiSearch, fetchWikiEntityDetails } from '../engine/wikiFetcher';
@@ -1426,11 +1426,6 @@ export default function Calculator() {
                                             <li key={i}>{trait}</li>
                                         ))
                                     )}
-                                    {UNREDUCED_LP_DESCRIPTIONS[language][`${reading.unreduced}/${typeof reading.lifepath === 'string' ? reading.lifepath.split('/')[1] : reading.lifepath}`]?.map((trait, i) => (
-                                        <li key={`unred-${i}`} style={{ color: 'var(--accent-gold)' }}>
-                                            <strong style={{ opacity: 0.8 }}>{t('Particularity:')}</strong> {trait}
-                                        </li>
-                                    ))}
                                 </ul>
                             </div>
 
@@ -1444,13 +1439,6 @@ export default function Calculator() {
                                     {NUMEROLOGY_DESCRIPTIONS[language][reading.dayReduced as number]?.map((trait, i) => (
                                         <li key={i}>{trait}</li>
                                     ))}
-                                    {UNREDUCED_LP_DESCRIPTIONS[language][reading.day + '/' + reading.dayReduced] && (
-                                        UNREDUCED_LP_DESCRIPTIONS[language][reading.day + '/' + reading.dayReduced].map((trait, i) => (
-                                            <li key={`unred-${i}`} style={{ color: 'var(--accent-gold)' }}>
-                                                <strong style={{ opacity: 0.8 }}>{t('Particularity:')}</strong> {trait}
-                                            </li>
-                                        ))
-                                    )}
                                 </ul>
                             </div>
 
