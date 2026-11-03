@@ -450,7 +450,7 @@ export default function Calendar() {
                                             maxWidth: '100%',
                                             overflow: 'hidden'
                                         }}>
-                                            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{language === 'fr' ? 'Mois Univ.' : 'Univ. Month'}: <strong>{uMonth}</strong></span>
+                                            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{language === 'fr' ? 'Mois' : 'Month'}: <strong>{uMonth}</strong></span>
                                             <span style={{ display: 'inline-flex', alignItems: 'center', flexShrink: 0 }}>
                                                 <EarthSignEmoji sign={yearEarthSign} size={13} />
                                             </span>
