@@ -552,14 +552,11 @@ export default function Calculator() {
 
             // Check if today is a lucky day based on Universal Day
             const isLuckyUniversalDay = universalCycles.universalDayUnreduced === luckyNumber.base || universalCycles.universalDayUnreduced === luckyNumber.flipped;
-            const isLuckyCalendarDay = now.getDate() === luckyNumber.base || now.getDate() === luckyNumber.flipped;
-            const todaysLucky = calculateLuckyNumber(now.getMonth() + 1, now.getDate(), now.getFullYear());
-            const isDateLuckyMatch = todaysLucky.base === luckyNumber.base || todaysLucky.base === luckyNumber.flipped;
             const isLuckyDigitsDate = isLuckyDateMatch(now.getMonth() + 1, now.getDate(), luckyNumber);
             const todayDayOfYear = getDayOfYear(now.getMonth() + 1, now.getDate(), now.getFullYear());
             const isLuckyDayOfYear = todayDayOfYear === luckyNumber.base || todayDayOfYear === luckyNumber.flipped;
 
-            const isLuckyToday = isLuckyUniversalDay || isLuckyCalendarDay || isDateLuckyMatch || isLuckyDigitsDate || isLuckyDayOfYear;
+            const isLuckyToday = isLuckyUniversalDay || isLuckyDigitsDate || isLuckyDayOfYear;
 
             // Compare to Today's values
             const todayEarthYearSign = getEarthSign(now.getFullYear(), now.getMonth() + 1, now.getDate());
@@ -596,11 +593,8 @@ export default function Calculator() {
                 const isLuckyEndYear = endYearLastTwo === luckyNumber.base || endYearLastTwo === luckyNumber.flipped;
 
                 const endPYearRaw = calculateLifePath(endDate.month, endDate.day, endDate.year).unreduced;
-                const endsLucky = calculateLuckyNumber(endDate.month, endDate.day, endDate.year);
                 const endDayOfYear = getDayOfYear(endDate.month, endDate.day, endDate.year);
                 const isLuckyEndDay = endPYearRaw === luckyNumber.base || endPYearRaw === luckyNumber.flipped ||
-                    endDate.day === luckyNumber.base || endDate.day === luckyNumber.flipped ||
-                    endsLucky.base === luckyNumber.base || endsLucky.base === luckyNumber.flipped ||
                     endDayOfYear === luckyNumber.base || endDayOfYear === luckyNumber.flipped ||
                     isLuckyDateMatch(endDate.month, endDate.day, luckyNumber);
 

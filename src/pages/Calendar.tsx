@@ -314,17 +314,9 @@ export default function Calendar() {
 
                                     let isLucky = false;
                                     if (exportedProfile) {
-                                        const todaysLucky = calculateLuckyNumber(currentMonth, day, currentYear);
-                                        const y1 = Math.floor(currentYear / 100);
-                                        const y2 = currentYear % 100;
-                                        const yearSum = y1 + y2;
-
                                         const dayOfYearNum = getDayOfYear(currentMonth, day, currentYear);
 
                                         isLucky = unreduced === exportedProfile.luckyNumber.base || unreduced === exportedProfile.luckyNumber.flipped ||
-                                            day === exportedProfile.luckyNumber.base || day === exportedProfile.luckyNumber.flipped ||
-                                            todaysLucky.base === exportedProfile.luckyNumber.base || todaysLucky.base === exportedProfile.luckyNumber.flipped ||
-                                            yearSum === exportedProfile.luckyNumber.base || yearSum === exportedProfile.luckyNumber.flipped ||
                                             dayOfYearNum === exportedProfile.luckyNumber.base || dayOfYearNum === exportedProfile.luckyNumber.flipped ||
                                             isLuckyDateMatch(currentMonth, day, exportedProfile.luckyNumber);
                                     }
@@ -415,13 +407,9 @@ export default function Calendar() {
                                 if (exportedProfile) {
                                     const uMonthRaw = m + reduceNumber(currentYear);
                                     const monthLucky = calculateLuckyNumber(m, 1, currentYear);
-                                    const y1 = Math.floor(currentYear / 100);
-                                    const y2 = currentYear % 100;
-                                    const yearSum = y1 + y2;
 
                                     isLucky = (uMonthRaw === exportedProfile.luckyNumber.base || uMonthRaw === exportedProfile.luckyNumber.flipped) ||
-                                        (monthLucky.base === exportedProfile.luckyNumber.base || monthLucky.base === exportedProfile.luckyNumber.flipped) ||
-                                        (yearSum === exportedProfile.luckyNumber.base || yearSum === exportedProfile.luckyNumber.flipped);
+                                        (monthLucky.base === exportedProfile.luckyNumber.base || monthLucky.base === exportedProfile.luckyNumber.flipped);
                                 }
 
                                 const cellStyle = getMonthColorStyle(m);
@@ -585,24 +573,10 @@ export default function Calendar() {
                         let luckyReasons: React.ReactNode[] = [];
 
                         if (exportedProfile) {
-
-                            const todaysLucky = calculateLuckyNumber(currentMonth, selectedDay, currentYear);
                             const { base: b, flipped: f } = exportedProfile.luckyNumber;
-                            const y1 = Math.floor(currentYear / 100);
-                            const y2 = currentYear % 100;
-                            const ySumActual = y1 + y2;
 
                             if (dayReading.unreduced === b || dayReading.unreduced === f) {
                                 luckyReasons.push(language === 'en' ? <span>Day energy (<strong>{dayReading.unreduced}</strong>) matches <strong>{b}/{f}</strong></span> : <span>L'énergie du jour (<strong>{dayReading.unreduced}</strong>) correspond à <strong>{b}/{f}</strong></span>);
-                            }
-                            if (selectedDay === b || selectedDay === f) {
-                                luckyReasons.push(language === 'en' ? <span>Day of the month (<strong>{selectedDay}</strong>) matches <strong>{b}/{f}</strong></span> : <span>Le jour du mois (<strong>{selectedDay}</strong>) correspond à <strong>{b}/{f}</strong></span>);
-                            }
-                            if (todaysLucky.base === b || todaysLucky.base === f) {
-                                luckyReasons.push(language === 'en' ? <span>Date lucky number (<strong>{todaysLucky.base}</strong>) matches <strong>{b}/{f}</strong></span> : <span>Le numéro de chance (<strong>{todaysLucky.base}</strong>) correspond à <strong>{b}/{f}</strong></span>);
-                            }
-                            if (ySumActual === b || ySumActual === f) {
-                                luckyReasons.push(language === 'en' ? <span>Year double-digit sum (<strong>{y1}+{y2}={ySumActual}</strong>) matches <strong>{b}/{f}</strong></span> : <span>La somme de l'année (<strong>{y1}+{y2}={ySumActual}</strong>) correspond à <strong>{b}/{f}</strong></span>);
                             }
                             if (isLuckyDateMatch(currentMonth, selectedDay, exportedProfile.luckyNumber)) {
                                 const formattedD = selectedDay.toString().padStart(2, '0');
@@ -785,9 +759,6 @@ export default function Calendar() {
                             const uMonthRaw = selectedMonth + reduceNumber(currentYear);
                             const monthLucky = calculateLuckyNumber(selectedMonth, 1, currentYear);
                             const { base: b, flipped: f } = exportedProfile.luckyNumber;
-                            const y1 = Math.floor(currentYear / 100);
-                            const y2 = currentYear % 100;
-                            const ySumActual = y1 + y2;
 
                             if (uMonthRaw === b || uMonthRaw === f) {
                                 luckyReasons.push(language === 'en' ? <span>Universal Month energy (<strong>{uMonthRaw}</strong>) matches <strong>{b}/{f}</strong></span> : <span>L'énergie du mois universel (<strong>{uMonthRaw}</strong>) correspond à <strong>{b}/{f}</strong></span>);
@@ -795,11 +766,6 @@ export default function Calendar() {
                             if (monthLucky.base === b || monthLucky.base === f) {
                                 luckyReasons.push(language === 'en' ? <span>Month lucky number (<strong>{monthLucky.base}</strong>) matches <strong>{b}/{f}</strong></span> : <span>Le numéro de chance du mois (<strong>{monthLucky.base}</strong>) correspond à <strong>{b}/{f}</strong></span>);
                             }
-                            if (ySumActual === b || ySumActual === f) {
-                                luckyReasons.push(language === 'en' ? <span>Year double-digit sum (<strong>{y1}+{y2}={ySumActual}</strong>) matches <strong>{b}/{f}</strong></span> : <span>La somme de l'année (<strong>{y1}+{y2}={ySumActual}</strong>) correspond à <strong>{b}/{f}</strong></span>);
-                            }
-
-                             
                         }
 
                         return (
