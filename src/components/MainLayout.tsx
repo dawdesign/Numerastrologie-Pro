@@ -20,12 +20,13 @@ export default function MainLayout() {
 
     return (
         <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-            <header style={{
+            <header className="app-header" style={{
                 borderBottom: '1px solid var(--border-color)',
                 background: 'var(--bg-main)',
                 position: 'sticky',
                 top: 0,
-                zIndex: 10
+                zIndex: 100,
+                paddingTop: 'env(safe-area-inset-top, 0px)'
             }}>
                 <div className="container mobile-header-container" style={{
                     display: 'flex',

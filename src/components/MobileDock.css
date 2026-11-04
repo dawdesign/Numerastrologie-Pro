@@ -1,3 +1,13 @@
+/* Application Header with Safe-Area Inset Support */
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-main);
+    border-bottom: 1px solid var(--border-color);
+    padding-top: env(safe-area-inset-top, 0px);
+}
+
 /* Desktop vs Mobile Navigation visibility */
 .desktop-header-nav {
     display: flex;
@@ -6,6 +16,11 @@
 
 .mobile-header-settings {
     display: none;
+}
+
+.mobile-header-container {
+    padding-left: max(var(--spacing-md), env(safe-area-inset-left, 0px));
+    padding-right: max(var(--spacing-md), env(safe-area-inset-right, 0px));
 }
 
 .native-dock-container {
