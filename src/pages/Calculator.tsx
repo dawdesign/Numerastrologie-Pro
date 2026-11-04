@@ -3,7 +3,7 @@ import LockedBox from '../components/LockedBox';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { calculateLifePath, reduceNumber, MASTER_NUMBERS, calculatePersonalCycles, calculateLuckyNumber, calculateUniversalCycles, reduceCycle, calculateAge, isLuckyDateMatch, getDayOfYear } from '../engine/numerology';
-import { getEarthSign, getWesternSign, WESTERN_SIGNS, getEarthMonthSign, EARTH_SIGNS, checkEarthSignCompatibility } from '../engine/astrology';
+import { getEarthSign, getLunarYear, getWesternSign, WESTERN_SIGNS, getEarthMonthSign, EARTH_SIGNS, checkEarthSignCompatibility } from '../engine/astrology';
 import { COUNTRIES_FOUNDING_DATA } from '../data/countriesData';
 import { CLUBS_FOUNDING_DATA } from '../data/clubsData';
 import { WIKI_EARTH_SIGNS } from '../data/wikiData';
@@ -22,7 +22,7 @@ const getOrdinal = (n: number, lang: string) => {
 };
 
 function getElement(lunarYear: number, t: (k: string) => string): { name: string, emoji: string } {
-    const digit = lunarYear % 10;
+    const digit = ((lunarYear % 10) + 10) % 10;
     if (digit === 0 || digit === 1) return { name: t('Metal'), emoji: '🪙' };
     if (digit === 2 || digit === 3) return { name: t('Water'), emoji: '💧' };
     if (digit === 4 || digit === 5) return { name: t('Wood'), emoji: '🪵' };
@@ -138,8 +138,12 @@ export default function Calculator() {
 
     const handleYearInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let valRaw = e.target.value.replace(/[^\d-]/g, '');
-        if (valRaw.length > 4) {
-            valRaw = valRaw.slice(0, 4);
+        if (valRaw.indexOf('-') > 0) {
+            valRaw = valRaw[0] + valRaw.slice(1).replace(/-/g, '');
+        }
+        const maxLen = valRaw.startsWith('-') ? 5 : 4;
+        if (valRaw.length > maxLen) {
+            valRaw = valRaw.slice(0, maxLen);
         }
         setYear(valRaw);
         setEndDate(null);
@@ -492,8 +496,8 @@ export default function Calculator() {
     const isExactDateUnknownEffective = isExactDateUnknown && !isFullDateValid;
 
     const yNum = typeof year === 'string' ? parseInt(year, 10) : year;
-    const computedEarthSignName = !isNaN(yNum) && yNum !== 0
-        ? getEarthSign(yNum, 1, 1).name
+    const computedEarthSignName = !isNaN(yNum)
+        ? (unknownDateEarthSign || getEarthSign(yNum, 6, 1).name)
         : unknownDateEarthSign;
 
     const earthSignObj = isExactDateUnknownEffective && computedEarthSignName
@@ -529,11 +533,7 @@ export default function Calculator() {
             const dayOfYear = getDayOfYear(m, d, y);
             const weekOfYear = Math.ceil(dayOfYear / 7);
 
-            let lunarYear = y;
-            const expectedMod = (earthSign.id + 4) % 12;
-            if (y % 12 !== expectedMod) {
-                lunarYear = y - 1;
-            }
+            const lunarYear = getLunarYear(y, m, d);
             const element = getElement(lunarYear, t);
 
             const skySignIndex = WESTERN_SIGNS.findIndex(s => s.name === skySign.name) + 1;

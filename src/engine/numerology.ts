@@ -284,6 +284,9 @@ export function calculateAge(birthDate: { year: number, month: number, day: numb
  * Calculates day of the year (1 - 365/366) for a given date.
  */
 export function getDayOfYear(month: number, day: number, year: number): number {
-    const diff = Date.UTC(year, month - 1, day) - Date.UTC(year, 0, 0);
-    return Math.floor(diff / (1000 * 60 * 60 * 24));
+    const start = new Date(Date.UTC(2000, 0, 1, 12, 0, 0));
+    start.setUTCFullYear(year, 0, 1);
+    const target = new Date(Date.UTC(2000, month - 1, day, 12, 0, 0));
+    target.setUTCFullYear(year, month - 1, day);
+    return Math.round((target.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
 }

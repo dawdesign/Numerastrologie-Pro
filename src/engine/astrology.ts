@@ -124,39 +124,105 @@ export const LUNAR_NEW_YEARS: { year: number, start: Date, signId: number }[] = 
     { year: 2031, start: new Date(2031, 0, 22), signId: 11 }
 ];
 
+const chineseCalendarFormatter = new Intl.DateTimeFormat('en-u-ca-chinese', {
+    month: 'numeric',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'UTC',
+});
+
+const lunarNewYearCache = new Map<number, { year: number; month: number; day: number; signId: number }>();
+
 /**
- * Get the Vietnamese Earth Sign based on the exact Lunar New Year boundary.
+ * Helper to create a UTC Date that accurately preserves any positive or negative year
+ * (avoiding JavaScript's 0..99 -> 1900..1999 Date constructor mapping).
+ */
+function createUTCDate(year: number, monthIndex: number, day: number): Date {
+    const dt = new Date(Date.UTC(2000, monthIndex, day, 12, 0, 0));
+    dt.setUTCFullYear(year, monthIndex, day);
+    return dt;
+}
+
+/**
+ * Automatically calculates the exact Lunar New Year (first day of the first lunar month)
+ * for any positive or negative year (AD or BC).
+ */
+export function getLunarNewYearDate(year: number): { year: number; month: number; day: number; signId: number } {
+    const cached = lunarNewYearCache.get(year);
+    if (cached) return cached;
+
+    const signId = ((year - 4) % 12 + 12) % 12;
+
+    // Preserve exact Vietnamese/Chinese table overrides where present (1948 - 2031)
+    const tableRow = LUNAR_NEW_YEARS.find(r => r.year === year);
+    if (tableRow) {
+        const result = {
+            year,
+            month: tableRow.start.getMonth() + 1,
+            day: tableRow.start.getDate(),
+            signId: tableRow.signId,
+        };
+        lunarNewYearCache.set(year, result);
+        return result;
+    }
+
+    // Astronomical calculation via ICU Chinese Lunisolar Calendar:
+    // Probe Feb 15 of `year` at 12:00 UTC.
+    const probe = createUTCDate(year, 1, 15);
+    const parts = chineseCalendarFormatter.formatToParts(probe);
+    const cm = parts.find(p => p.type === 'month')?.value;
+    const cd = parseInt(parts.find(p => p.type === 'day')?.value || '1', 10);
+
+    let lnyTime: number;
+    if (cm === '1') {
+        // Feb 15 is day `cd` of Lunar Month 1 -> Month 1 Day 1 is (cd - 1) days earlier
+        lnyTime = probe.getTime() - (cd - 1) * 86400000;
+    } else if (cm === '12' || cm === '11' || (cm && cm.startsWith('12'))) {
+        // Feb 15 is still in the last month of the previous lunar year -> probe 15 days later (in Month 1)
+        const probe2 = new Date(probe.getTime() + 15 * 86400000);
+        const parts2 = chineseCalendarFormatter.formatToParts(probe2);
+        const cd2 = parseInt(parts2.find(p => p.type === 'day')?.value || '1', 10);
+        lnyTime = probe2.getTime() - (cd2 - 1) * 86400000;
+    } else {
+        // Feb 15 is already in Month 2 (or leap Month 1bis) -> probe 20 days earlier (in Month 1)
+        const probe2 = new Date(probe.getTime() - 20 * 86400000);
+        const parts2 = chineseCalendarFormatter.formatToParts(probe2);
+        const cd2 = parseInt(parts2.find(p => p.type === 'day')?.value || '1', 10);
+        lnyTime = probe2.getTime() - (cd2 - 1) * 86400000;
+    }
+
+    const lnyDate = new Date(lnyTime);
+    const result = {
+        year,
+        month: lnyDate.getUTCMonth() + 1,
+        day: lnyDate.getUTCDate(),
+        signId,
+    };
+    lunarNewYearCache.set(year, result);
+    return result;
+}
+
+/**
+ * Returns the Lunar Year number for any given date (year, month 1-12, day 1-31).
+ * If the date is before that year's Lunar New Year (1st day of 1st lunar month),
+ * it belongs to `year - 1`.
+ */
+export function getLunarYear(year: number, month: number, day: number): number {
+    const lny = getLunarNewYearDate(year);
+    if (month < lny.month || (month === lny.month && day < lny.day)) {
+        return year - 1;
+    }
+    return year;
+}
+
+/**
+ * Get the Vietnamese/Chinese Earth Sign based on the exact Lunar New Year boundary
+ * (first day of the first lunar month) for any positive or negative year.
  */
 export function getEarthSign(year: number, month: number, day: number): ZodiacSign {
-    // month is 1-indexed (1 = Jan, 2 = Feb)
-    const targetDate = new Date(year, month - 1, day);
-
-    // Find the Lunar New Year for this calendar year
-    const lunarYearRow = LUNAR_NEW_YEARS.find(r => r.year === year);
-
-    if (lunarYearRow) {
-        if (targetDate >= lunarYearRow.start) {
-            // The person was born on or after LNY -> they belong to this year's sign
-            return EARTH_SIGNS[lunarYearRow.signId];
-        } else {
-            // Born before LNY -> they belong to the PREVIOUS year's sign
-            // The id of the previous year is simply (thisYearID - 1 + 12) % 12
-            const previousSignId = (lunarYearRow.signId - 1 + 12) % 12;
-            return EARTH_SIGNS[previousSignId];
-        }
-    } else {
-        // Fallback logic if out of bounds (1948 - 2031)
-        // Approximate Lunar New Year around Feb 4th.
-        let lunarYear = year;
-        if (month === 1 || (month === 2 && day <= 4)) {
-            lunarYear = year - 1;
-        }
-
-        // Approximate using math: Year of Rat (1960) -> 1960 % 12 === 4.
-        // So (Year - 4) % 12 give the sign ID.
-        const approximateId = ((lunarYear - 4) % 12 + 12) % 12; // Avoid negative moduli
-        return EARTH_SIGNS[approximateId];
-    }
+    const lunarYear = getLunarYear(year, month, day);
+    const signId = ((lunarYear - 4) % 12 + 12) % 12;
+    return EARTH_SIGNS[signId];
 }
 
 /**
