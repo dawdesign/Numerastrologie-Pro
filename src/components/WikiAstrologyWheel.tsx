@@ -388,29 +388,29 @@ export default function WikiAstrologyWheel() {
             </div>
 
             {/* Description Card Underneath */}
-            <div className="card animate-fade-in" style={{ 
+            <div className="card animate-fade-in wiki-wheel-desc-card" style={{ 
                 width: '100%', 
                 maxWidth: '650px',
                 display: 'flex', 
-                gap: 'var(--spacing-lg)', 
+                gap: 'clamp(14px, 3vw, var(--spacing-lg))', 
                 alignItems: 'flex-start',
                 background: 'linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary))',
                 border: '1px solid var(--border-color)',
-                padding: 'var(--spacing-xl)',
+                padding: 'clamp(16px, 3.5vw, var(--spacing-xl))',
                 borderRadius: 'var(--radius-lg)'
             }}>
-                <div style={{
-                    fontSize: '4.5rem',
+                <div className="wiki-wheel-desc-icon" style={{
+                    fontSize: 'clamp(3.2rem, 8vw, 4.5rem)',
                     lineHeight: 1,
-                    minWidth: '85px',
+                    minWidth: 'clamp(70px, 15vw, 85px)',
                     textAlign: 'center',
                     borderRight: '1px solid var(--border-color)',
-                    paddingRight: 'var(--spacing-lg)',
+                    paddingRight: 'clamp(12px, 2.5vw, var(--spacing-lg))',
                     marginTop: '-4px'
                 }}>
                     {activeSign.emoji === 'BOEUF' ? '🐂' : activeSign.emoji}
                 </div>
-                <div style={{ flex: 1 }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
                     <h3 style={{ 
                         margin: '0 0 var(--spacing-sm) 0', 
                         fontSize: '1.4rem', 

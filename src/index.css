@@ -79,6 +79,12 @@
   padding: 0;
 }
 
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: var(--bg-main);
@@ -581,4 +587,80 @@ p {
     white-space: nowrap;
     height: 24px;
     line-height: 1;
+}
+
+/* ============================================================
+   GLOBAL RESPONSIVE GUARDRAILS (Anti-Deformation & Anti-Overflow)
+   ============================================================ */
+.card,
+.matrix-calendar-card,
+.matrix-details-card {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.date-selector-card {
+    width: 100%;
+    max-width: 700px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: clamp(16px, 4vw, 32px) clamp(12px, 3vw, 24px) 38px clamp(12px, 3vw, 24px) !important;
+    gap: clamp(10px, 4vw, 32px) !important;
+    position: relative;
+}
+
+.wiki-wheel-desc-card {
+    width: 100%;
+    max-width: 650px;
+    display: flex;
+    gap: clamp(12px, 3vw, var(--spacing-lg));
+    align-items: flex-start;
+    padding: clamp(14px, 3.5vw, var(--spacing-xl)) !important;
+}
+
+.wiki-wheel-desc-icon {
+    font-size: clamp(2.8rem, 8vw, 4.5rem) !important;
+    line-height: 1;
+    min-width: clamp(56px, 14vw, 85px) !important;
+    text-align: center;
+    border-right: 1px solid var(--border-color);
+    padding-right: clamp(10px, 2.5vw, var(--spacing-lg)) !important;
+    margin-top: -4px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 520px) {
+    .exported-profile-banner {
+        flex-wrap: wrap;
+        gap: 8px 12px;
+    }
+
+    .exported-profile-stats {
+        width: 100%;
+        justify-content: space-between;
+        border-top: 1px solid var(--border-color);
+        padding-top: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 12px;
+    }
+
+    .wiki-wheel-desc-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: left;
+    }
+
+    .wiki-wheel-desc-icon {
+        border-right: none !important;
+        border-bottom: 1px solid var(--border-color);
+        padding-right: 0 !important;
+        padding-bottom: 10px !important;
+        margin-top: 0 !important;
+        width: 100%;
+    }
 }

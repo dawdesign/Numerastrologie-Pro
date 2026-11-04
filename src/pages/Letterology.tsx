@@ -24,12 +24,12 @@ export default function Letterology() {
     const numReduced = numberInput ? reduceNumber(parseInt(numberInput, 10)) : null;
 
     return (
-        <div className="animate-fade-in" style={{ maxWidth: '850px', margin: '0 auto', padding: '0 var(--spacing-md) var(--spacing-2xl)' }}>
+        <div className="animate-fade-in" style={{ maxWidth: '850px', margin: '0 auto', padding: '0 0 var(--spacing-2xl)' }}>
 
             {/* Header section with esoteric tone */}
             <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-2xl)', position: 'relative' }}>
                 <h1 style={{
-                    fontSize: '2.5rem',
+                    fontSize: 'clamp(1.65rem, 5vw, 2.5rem)',
                     fontWeight: 800,
                     letterSpacing: '-0.03em',
                     background: 'linear-gradient(135deg, var(--text-main) 30%, var(--accent-purple) 100%)',
@@ -39,7 +39,7 @@ export default function Letterology() {
                 }}>
                     {t('Text & Number Reduction')}
                 </h1>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '500px', margin: '0 auto' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.9rem, 2.5vw, 1rem)', maxWidth: '500px', margin: '0 auto' }}>
                     {language === 'en'
                         ? 'Deconstruct letters and numbers into their core energetic vibrations.'
                         : 'Déconstruisez les lettres et les nombres en leurs vibrations énergétiques fondamentales.'
@@ -61,7 +61,7 @@ export default function Letterology() {
                     border: '1px solid var(--border-color)',
                     boxShadow: 'var(--shadow-md)',
                     borderRadius: 'var(--radius-lg)',
-                    padding: 'var(--spacing-xl)',
+                    padding: 'clamp(14px, 4vw, var(--spacing-xl))',
                     background: 'var(--bg-main)',
                     overflow: 'hidden',
                     position: 'relative'
@@ -169,7 +169,7 @@ export default function Letterology() {
                                 display: 'flex',
                                 flexDirection: 'column',
                                 background: 'linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary))',
-                                padding: 'var(--spacing-lg)',
+                                padding: 'clamp(14px, 3.5vw, var(--spacing-lg))',
                                 borderRadius: 'var(--radius-lg)',
                                 border: '1px solid var(--border-color)',
                                 gap: 'var(--spacing-md)'
@@ -183,26 +183,26 @@ export default function Letterology() {
                                     flexWrap: 'wrap',
                                     width: '100%'
                                 }}>
-                                    <div style={{ textAlign: 'center', flex: 1, minWidth: '120px' }}>
+                                    <div style={{ textAlign: 'center', flex: 1, minWidth: '100px' }}>
                                         <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
                                             {t('Unreduced Form')}
                                         </div>
-                                        <div style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1 }}>{originalSum}</div>
+                                        <div style={{ fontSize: 'clamp(2.1rem, 7vw, 3rem)', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1 }}>{originalSum}</div>
                                     </div>
 
                                     <div className="letterology-star" style={{
-                                        fontSize: '2rem',
+                                        fontSize: 'clamp(1.4rem, 4vw, 2rem)',
                                         color: 'var(--accent-purple)',
                                         opacity: 0.6,
                                     }}>
                                         ✦
                                     </div>
 
-                                    <div style={{ textAlign: 'center', flex: 1, minWidth: '120px' }}>
+                                    <div style={{ textAlign: 'center', flex: 1, minWidth: '100px' }}>
                                         <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
                                             {t('Matrix Value')}
                                         </div>
-                                        <div style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--accent-purple)', lineHeight: 1 }}>{reduced}</div>
+                                        <div style={{ fontSize: 'clamp(2.1rem, 7vw, 3rem)', fontWeight: 800, color: 'var(--accent-purple)', lineHeight: 1 }}>{reduced}</div>
                                     </div>
                                 </div>
 
@@ -240,7 +240,7 @@ export default function Letterology() {
                     border: '1px solid var(--border-color)',
                     boxShadow: 'var(--shadow-md)',
                     borderRadius: 'var(--radius-lg)',
-                    padding: 'var(--spacing-xl)',
+                    padding: 'clamp(14px, 4vw, var(--spacing-xl))',
                     background: 'var(--bg-main)',
                     position: 'relative'
                 }}>
@@ -278,14 +278,14 @@ export default function Letterology() {
                         <div className="animate-fade-in" style={{
                             textAlign: 'center',
                             background: 'linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary))',
-                            padding: 'var(--spacing-xl)',
+                            padding: 'clamp(16px, 4vw, var(--spacing-xl))',
                             borderRadius: 'var(--radius-lg)',
                             border: '1px solid var(--border-color)'
                         }}>
                             <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--spacing-sm)' }}>
                                 {t('Reduced Form')}
                             </div>
-                            <div style={{ fontSize: '3.5rem', fontWeight: 800, color: 'var(--accent-gold)', lineHeight: 1 }}>
+                            <div style={{ fontSize: 'clamp(2.4rem, 8vw, 3.5rem)', fontWeight: 800, color: 'var(--accent-gold)', lineHeight: 1 }}>
                                 {numReduced}
                             </div>
                         </div>

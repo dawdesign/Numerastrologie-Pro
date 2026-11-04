@@ -1,6 +1,7 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Compass, Calendar, Hash, BookOpen, Settings as SettingsIcon, Search } from 'lucide-react';
 import { useSettings } from '../context/SettingsContext';
+import MobileDock from './MobileDock';
 
 export default function MainLayout() {
     const location = useLocation();
@@ -15,6 +16,8 @@ export default function MainLayout() {
         { name: 'Settings', path: '/settings', icon: SettingsIcon },
     ];
 
+    const isSettingsActive = location.pathname.startsWith('/settings');
+
     return (
         <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
             <header style={{
@@ -24,7 +27,7 @@ export default function MainLayout() {
                 top: 0,
                 zIndex: 10
             }}>
-                <div className="container" style={{
+                <div className="container mobile-header-container" style={{
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
@@ -35,7 +38,7 @@ export default function MainLayout() {
                         Numerastrologie Pro
                     </Link>
 
-                    <nav style={{ display: 'flex', gap: 'clamp(8px, 2vw, 20px)' }}>
+                    <nav className="desktop-header-nav">
                         {links.map((link) => {
                             const Icon = link.icon;
                             const isActive = location.pathname === link.path || (link.path !== '/' && location.pathname.startsWith(link.path));
@@ -59,16 +62,32 @@ export default function MainLayout() {
                             );
                         })}
                     </nav>
+
+                    <Link
+                        to="/settings"
+                        className="mobile-header-settings"
+                        title={t('Settings')}
+                        style={{
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: isSettingsActive ? 'var(--accent-purple)' : 'var(--text-secondary)',
+                            padding: '6px',
+                            borderRadius: '8px',
+                            transition: 'color 0.2s'
+                        }}
+                    >
+                        <SettingsIcon size={20} strokeWidth={isSettingsActive ? 2.4 : 1.9} />
+                    </Link>
                 </div>
             </header>
 
-            <main style={{ flex: 1, padding: 'clamp(12px, 2vh, 24px) 0', backgroundColor: 'var(--bg-secondary)' }}>
+            <main className="app-main-content" style={{ flex: 1, padding: 'clamp(12px, 2vh, 24px) 0', backgroundColor: 'var(--bg-secondary)' }}>
                 <div className="container">
                     <Outlet />
                 </div>
             </main>
 
-            <footer style={{
+            <footer className="app-footer" style={{
                 borderTop: '1px solid var(--border-color)',
                 padding: 'var(--spacing-xl) 0',
                 background: 'var(--bg-main)',
@@ -79,6 +98,8 @@ export default function MainLayout() {
                     <p>{t('Numerastrologie Pro by DD22')}</p>
                 </div>
             </footer>
+
+            <MobileDock />
         </div>
     );
 }

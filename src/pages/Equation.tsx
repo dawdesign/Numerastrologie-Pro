@@ -553,9 +553,9 @@ export default function Equation() {
         <div className="animate-fade-in" style={{ maxWidth: '940px', margin: '0 auto', padding: '0 var(--spacing-md) var(--spacing-2xl)' }}>
             
             {/* Header section with esoteric aesthetic */}
-            <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-2xl)', position: 'relative' }}>
+            <div style={{ textAlign: 'center', marginBottom: 'clamp(20px, 4vw, var(--spacing-2xl))', position: 'relative' }}>
                 <h1 style={{ 
-                    fontSize: '2.5rem', 
+                    fontSize: 'clamp(1.65rem, 5vw, 2.5rem)', 
                     fontWeight: 800, 
                     letterSpacing: '-0.03em', 
                     background: 'linear-gradient(135deg, var(--text-main) 30%, var(--accent-gold) 100%)',
@@ -565,7 +565,7 @@ export default function Equation() {
                 }}>
                     {t('Date Finder & Equation')}
                 </h1>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '560px', margin: '0 auto' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.88rem, 2.5vw, 1rem)', maxWidth: '560px', margin: '0 auto' }}>
                     {language === 'en'
                         ? 'Find specific dates matching exact Numerology (Lifepath, Secondary Energy) and Astrology (Chinese Year, Earth Month, Sky Sign) filters within a designated timeframe.'
                         : 'Trouvez des dates spécifiques selon les filtres précis de Numérologie (Chemin de vie, Énergie secondaire) et d\'Astrologie (Année chinoise, Mois de terre, Signe du ciel).'
@@ -585,7 +585,7 @@ export default function Equation() {
                 border: '1px solid var(--border-color)',
                 boxShadow: 'var(--shadow-md)',
                 borderRadius: 'var(--radius-lg)',
-                padding: 'var(--spacing-xl)',
+                padding: 'clamp(14px, 4vw, var(--spacing-xl))',
                 background: 'var(--bg-main)',
                 overflow: 'visible',
                 position: 'relative',
@@ -612,7 +612,7 @@ export default function Equation() {
                             <span>{language === 'fr' ? 'Période de Recherche' : 'Search Date Range'}</span>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--spacing-lg)' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: 'var(--spacing-lg)' }}>
                             
                             {/* Start Date Box */}
                             <div style={{ 
@@ -861,7 +861,7 @@ export default function Equation() {
                         </div>
 
                         {/* Interactive Multi-Select Filter Boxes */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--spacing-md)' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: 'var(--spacing-md)' }}>
                             
                             {/* 1. Life Path Box */}
                             {renderFilterBox(
@@ -921,8 +921,9 @@ export default function Equation() {
                         type="submit" 
                         style={{ 
                             alignSelf: 'center', 
-                            minWidth: '260px',
-                            padding: '12px 30px',
+                            width: '100%',
+                            maxWidth: '280px',
+                            padding: '12px 24px',
                             fontSize: '1.05rem',
                             fontWeight: 700,
                             color: '#111111',
@@ -1154,7 +1155,7 @@ export default function Equation() {
                         <span style={{ color: 'var(--accent-purple)' }}>✦</span> {t('Results')} ({results.length}{results.length >= 250 ? '+' : ''})
                     </h3>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 'var(--spacing-lg)' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 250px), 1fr))', gap: 'var(--spacing-lg)' }}>
                         {results.map((res, i) => (
                             <div 
                                 key={i} 

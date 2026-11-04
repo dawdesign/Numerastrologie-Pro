@@ -933,7 +933,7 @@ export default function WikiSkyWheel() {
             </div>
 
             {/* Description Card Underneath */}
-            <div className="card animate-fade-in" style={{ 
+            <div className="card animate-fade-in wiki-wheel-desc-card" style={{ 
                 width: '100%', 
                 maxWidth: '650px',
                 display: 'flex', 
@@ -947,7 +947,7 @@ export default function WikiSkyWheel() {
                 transition: 'border-color 0.4s ease'
             }}>
                 {/* Left: Large Glyph with Element Tint */}
-                <div style={{
+                <div className="wiki-wheel-desc-icon" style={{
                     fontSize: 'clamp(3.5rem, 8vw, 4.5rem)',
                     lineHeight: 1,
                     minWidth: 'clamp(70px, 15vw, 85px)',

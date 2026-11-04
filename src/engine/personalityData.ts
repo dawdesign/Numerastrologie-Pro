@@ -38,6 +38,7 @@ export const NUMEROLOGY_DESCRIPTIONS: Record<'en' | 'fr', Record<number, string[
         ],
         5: [
             "Voyage beaucoup.",
+            "Dort beaucoup.",
             "Beauté physique.",
             "Ouvert d’esprit (la forme du 5 est ouvert des deux sens).",
             "Très indécis, change tout le temps d’avis. Peu fiable.",
@@ -73,7 +74,7 @@ export const NUMEROLOGY_DESCRIPTIONS: Record<'en' | 'fr', Record<number, string[
             "S’attache sentimentalement aux objets et à du mal à les jeter.",
             "Une fois qu’ils s’attachent à quelque chose ou quelqu'un, ont du mal à lâcher prise.",
             "Sont sensibles à la beauté.",
-            "Ne devrait pas se tatouer.",
+            "Égoistes.",
             "Gèrent mal la pression, mais conseillent bien les autres."
         ],
         11: [
@@ -141,6 +142,7 @@ export const NUMEROLOGY_DESCRIPTIONS: Record<'en' | 'fr', Record<number, string[
         ],
         5: [
             "Travels a lot.",
+            "Sleeps a lot.",
             "Physical beauty.",
             "Open-minded (the shape of 5 is open both ways).",
             "Very indecisive, constantly changing mind. Unreliable.",
@@ -176,7 +178,7 @@ export const NUMEROLOGY_DESCRIPTIONS: Record<'en' | 'fr', Record<number, string[
             "Sentimental attachment to objects, hard to throw away.",
             "Once attached to someone or something, hard to let go.",
             "Sensitive to beauty.",
-            "Should not get tattooed.",
+            "Selfish.",
             "Handles pressure poorly, but gives great advice to others."
         ],
         11: [
@@ -231,11 +233,11 @@ export const EARTH_SIGN_DESCRIPTIONS: Record<'en' | 'fr', Record<number, string[
         2: [ // Tigre
             "Musclés.",
             "Agissent avant de réfléchir.",
-            "Ne sont pas intellectuels physiques.",
+            "Ne sont pas intellectuels, mais physiques.",
             "Font plus jeunes que leur âge.",
             "Viellissent très bien, sont là pour durer.",
             "Pas de très bons parents.",
-            "Se bat bien, des combattants."
+            "Se battent bien, des combattants."
         ],
         3: [ // Chat
             "Intelligent, psychologue.",
@@ -347,11 +349,11 @@ export const EARTH_SIGN_DESCRIPTIONS: Record<'en' | 'fr', Record<number, string[
         2: [ // Tiger
             "Muscular.",
             "Acts before thinking.",
-            "Physical over intellectual.",
+            "Not intellectual, but physical.",
             "Looks younger than their age.",
             "Ages very well, built to last.",
             "Not the best parents.",
-            "Fights well, natural fighters."
+            "Fight well, natural fighters."
         ],
         3: [ // Cat
             "Intelligent, psychological.",

@@ -1,0 +1,337 @@
+/* Desktop vs Mobile Navigation visibility */
+.desktop-header-nav {
+    display: flex;
+    gap: clamp(8px, 2vw, 20px);
+}
+
+.mobile-header-settings {
+    display: none;
+}
+
+.native-dock-container {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .desktop-header-nav {
+        display: none !important;
+    }
+
+    .mobile-header-settings {
+        display: flex !important;
+    }
+
+    .mobile-header-container {
+        justify-content: space-between !important;
+    }
+
+    .app-main-content {
+        padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+    }
+
+    .app-footer {
+        padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px)) !important;
+    }
+
+    /* Dock wrapper positioned above the viewport bottom with safe-area spacing */
+    .native-dock-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 999;
+        display: flex;
+        justify-content: center;
+        pointer-events: none;
+        padding: 0 12px;
+        padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .dock-pill {
+        pointer-events: auto;
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        align-items: stretch;
+        gap: 0;
+        padding: 5px 6px;
+        border-radius: 9999px;
+        max-width: 420px;
+        width: 100%;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+        transition: box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .native-dock-container.is-dragging .dock-pill {
+        transform: scale(1.015);
+    }
+
+    /* Full-zone selector track matching the inner grid area of dock-pill */
+    .dock-selector-track {
+        position: absolute;
+        top: 3px;
+        bottom: 3px;
+        left: 6px;
+        right: 6px;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    /* Deformable selector bubble covering 100% of one button's icon + text zone with generous breathing room */
+    .dock-selector-bubble {
+        position: relative;
+        width: calc(100% / 5);
+        height: 100%;
+        border-radius: 9999px;
+        transform-origin: center center;
+        will-change: transform, opacity;
+        background: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+
+    .dock-selector-bubble::before {
+        content: '';
+        position: absolute;
+        inset: -2px -5px;
+        border-radius: inherit;
+        transition: background 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .dock-item {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        background: transparent;
+        border: none;
+        outline: none;
+        padding: 8px 3px 7px;
+        border-radius: 9999px;
+        min-width: 0;
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease;
+    }
+
+    .dock-item:active {
+        transform: scale(0.92);
+    }
+
+    .dock-icon-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 24px;
+        transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .dock-item.active .dock-icon-wrapper {
+        transform: translateY(-1px) scale(1.06);
+    }
+
+    .dock-label {
+        font-size: 0.62rem;
+        font-weight: 500;
+        margin-top: 2px;
+        line-height: 1.1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 94%;
+        opacity: 0.72;
+        letter-spacing: -0.01em;
+        transition: opacity 0.2s, font-weight 0.2s, color 0.2s, transform 0.2s;
+    }
+
+    .dock-item.active .dock-label {
+        opacity: 1;
+        font-weight: 600;
+    }
+
+    /* ========================================================
+       iOS "LIQUID GLASS" SPECIFICATION (Floating Translucent Capsule)
+       ======================================================== */
+    .dock-ios .dock-pill {
+        background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.72) 0%,
+            rgba(255, 255, 255, 0.52) 50%,
+            rgba(245, 247, 250, 0.65) 100%
+        );
+        backdrop-filter: blur(32px) saturate(210%);
+        -webkit-backdrop-filter: blur(32px) saturate(210%);
+        box-shadow:
+            0 12px 36px -4px rgba(0, 0, 0, 0.14),
+            0 4px 14px -2px rgba(0, 0, 0, 0.06),
+            inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.9),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+        border: 0.5px solid rgba(255, 255, 255, 0.55);
+    }
+
+    [data-theme="dark"] .dock-ios .dock-pill {
+        background: linear-gradient(
+            135deg,
+            rgba(38, 38, 42, 0.72) 0%,
+            rgba(24, 24, 28, 0.58) 50%,
+            rgba(32, 32, 36, 0.68) 100%
+        );
+        backdrop-filter: blur(34px) saturate(200%);
+        -webkit-backdrop-filter: blur(34px) saturate(200%);
+        box-shadow:
+            0 16px 42px -4px rgba(0, 0, 0, 0.58),
+            0 4px 16px 0 rgba(0, 0, 0, 0.35),
+            inset 0 1px 1.2px 0 rgba(255, 255, 255, 0.22),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.45);
+        border: 0.5px solid rgba(255, 255, 255, 0.14);
+    }
+
+    /* Full-zone iOS Liquid Glass Selector Pill (covers icon + text) */
+    .dock-ios .dock-selector-bubble::before {
+        background: linear-gradient(
+            165deg,
+            rgba(255, 255, 255, 0.85) 0%,
+            rgba(244, 235, 255, 0.62) 55%,
+            rgba(153, 51, 255, 0.16) 100%
+        );
+        box-shadow:
+            0 4px 14px -2px rgba(153, 51, 255, 0.22),
+            0 2px 6px rgba(0, 0, 0, 0.06),
+            inset 0 1.2px 1.5px rgba(255, 255, 255, 0.95),
+            inset 0 -1px 1.5px rgba(153, 51, 255, 0.15);
+        border: 0.5px solid rgba(255, 255, 255, 0.85);
+    }
+
+    .dock-ios.is-dragging .dock-selector-bubble::before {
+        background: linear-gradient(
+            165deg,
+            rgba(255, 255, 255, 0.92) 0%,
+            rgba(240, 225, 255, 0.75) 50%,
+            rgba(153, 51, 255, 0.24) 100%
+        );
+        box-shadow:
+            0 6px 20px -2px rgba(153, 51, 255, 0.32),
+            0 2px 8px rgba(0, 0, 0, 0.09),
+            inset 0 1.5px 2px rgba(255, 255, 255, 1),
+            inset 0 -1px 2px rgba(153, 51, 255, 0.22);
+    }
+
+    [data-theme="dark"] .dock-ios .dock-selector-bubble::before {
+        background: linear-gradient(
+            165deg,
+            rgba(255, 255, 255, 0.22) 0%,
+            rgba(153, 51, 255, 0.24) 55%,
+            rgba(153, 51, 255, 0.15) 100%
+        );
+        box-shadow:
+            0 4px 16px -2px rgba(0, 0, 0, 0.45),
+            0 0 14px rgba(179, 102, 255, 0.22),
+            inset 0 1px 1.5px rgba(255, 255, 255, 0.38),
+            inset 0 -1px 1.2px rgba(179, 102, 255, 0.25);
+        border: 0.5px solid rgba(255, 255, 255, 0.22);
+    }
+
+    [data-theme="dark"] .dock-ios.is-dragging .dock-selector-bubble::before {
+        background: linear-gradient(
+            165deg,
+            rgba(255, 255, 255, 0.3) 0%,
+            rgba(153, 51, 255, 0.34) 55%,
+            rgba(153, 51, 255, 0.22) 100%
+        );
+        box-shadow:
+            0 6px 22px -2px rgba(0, 0, 0, 0.55),
+            0 0 18px rgba(179, 102, 255, 0.36),
+            inset 0 1.5px 2px rgba(255, 255, 255, 0.48),
+            inset 0 -1px 1.5px rgba(179, 102, 255, 0.32);
+    }
+
+    .dock-ios .dock-item {
+        color: var(--text-secondary);
+    }
+
+    .dock-ios .dock-item.active {
+        color: var(--accent-purple);
+    }
+
+    /* ========================================================
+       ANDROID MATERIAL YOU (M3) SPECIFICATION (Full-Width Bottom Bar)
+       ======================================================== */
+    .native-dock-container.dock-android {
+        padding: 0;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .dock-android .dock-pill {
+        max-width: 100%;
+        border-radius: 0;
+        background: #f3f4f9;
+        box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.08), 0 -4px 16px rgba(0, 0, 0, 0.04);
+        border: none;
+        border-top: 1px solid var(--border-color);
+        padding: 6px 6px 7px;
+    }
+
+    .native-dock-container.dock-android.is-dragging .dock-pill {
+        transform: none;
+    }
+
+    [data-theme="dark"] .dock-android .dock-pill {
+        background: #1e1f25;
+        box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.06), 0 -6px 20px rgba(0, 0, 0, 0.4);
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .dock-android .dock-selector-track {
+        top: 5px;
+        bottom: 5px;
+    }
+
+    .dock-android .dock-selector-bubble {
+        border-radius: 9999px;
+    }
+
+    .dock-android .dock-selector-bubble::before {
+        inset: 0 -2px;
+        background: rgba(153, 51, 255, 0.16);
+        border-radius: 9999px;
+        box-shadow: none;
+        border: none;
+    }
+
+    [data-theme="dark"] .dock-android .dock-selector-bubble::before {
+        background: rgba(179, 102, 255, 0.22);
+    }
+
+    .dock-android .dock-item {
+        color: var(--text-secondary);
+        border-radius: 16px;
+    }
+
+    .dock-android .dock-item.active {
+        color: var(--text-main);
+    }
+
+    .dock-android .dock-item.active .dock-icon-wrapper {
+        color: var(--accent-purple);
+        transform: none;
+    }
+
+    .dock-android .dock-label {
+        font-family: Roboto, system-ui, -apple-system, sans-serif;
+        font-size: 0.66rem;
+        margin-top: 4px;
+        letter-spacing: 0.01em;
+    }
+
+    .dock-android .dock-item.active .dock-label {
+        font-weight: 700;
+    }
+}

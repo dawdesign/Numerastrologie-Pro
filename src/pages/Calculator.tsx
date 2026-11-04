@@ -666,7 +666,7 @@ export default function Calculator() {
 
             {/* Global Search integrated to the Home Page */}
             <div ref={searchRef} style={{ width: '100%', maxWidth: '700px', marginBottom: 'var(--spacing-md)' }}>
-                <form onSubmit={searchWikipedia} style={{ display: 'flex', gap: 'var(--spacing-sm)', position: 'relative' }}>
+                <form onSubmit={searchWikipedia} style={{ display: 'flex', gap: 'var(--spacing-sm)', position: 'relative', width: '100%' }}>
                     <input
                         type="text"
                         value={query}
@@ -682,9 +682,9 @@ export default function Calculator() {
                         }}
                         placeholder={t('Search for celebrities or countries...')}
                         className="input-field"
-                        style={{ flex: 1, padding: 'var(--spacing-sm) var(--spacing-md)' }}
+                        style={{ flex: 1, minWidth: 0, padding: 'var(--spacing-sm) clamp(10px, 3vw, 16px)', fontSize: 'clamp(0.88rem, 3.2vw, 1rem)' }}
                     />
-                    <button type="submit" className="btn btn-primary" disabled={loading} style={{ padding: 'var(--spacing-sm) var(--spacing-lg)' }}>
+                    <button type="submit" className="btn btn-primary" disabled={loading} style={{ flexShrink: 0, whiteSpace: 'nowrap', padding: 'var(--spacing-sm) clamp(14px, 4vw, 24px)', fontSize: 'clamp(0.85rem, 3vw, 0.95rem)' }}>
                         {loading ? t('Searching...') : t('Search')}
                     </button>
 
@@ -839,20 +839,22 @@ export default function Calculator() {
                         </button>
                     </div>
 
-                    {selectedEntityName && <h2 style={{ fontSize: '1.2rem', marginBottom: 'var(--spacing-sm)', color: 'var(--text-secondary)' }}>{selectedEntityName}</h2>}
-                    <div style={{ display: 'flex', gap: 'var(--spacing-md)', alignItems: 'center' }}>
-                        <div style={{ position: 'relative' }}>
+                    {selectedEntityName && <h2 style={{ fontSize: 'clamp(1rem, 3.5vw, 1.2rem)', marginBottom: 'var(--spacing-sm)', color: 'var(--text-secondary)', padding: '0 44px', textAlign: 'center', wordBreak: 'break-word' }}>{selectedEntityName}</h2>}
+                    <div style={{ display: 'flex', gap: 'var(--spacing-md)', alignItems: 'center', padding: '0 44px', maxWidth: '100%' }}>
+                        <div style={{ position: 'relative', maxWidth: '100%' }}>
                             <div style={{
                                 background: 'var(--bg-main)',
-                                padding: 'var(--spacing-sm) var(--spacing-xl)',
+                                padding: 'var(--spacing-sm) clamp(14px, 4vw, var(--spacing-xl))',
                                 borderRadius: 'var(--radius-sm)',
                                 border: '1px solid var(--border-color)',
-                                fontSize: '1.5rem',
+                                fontSize: 'clamp(1.15rem, 4.5vw, 1.5rem)',
                                 boxShadow: 'var(--shadow-md)',
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '12px',
-                                position: 'relative'
+                                justifyContent: 'center',
+                                gap: 'clamp(8px, 2vw, 12px)',
+                                position: 'relative',
+                                whiteSpace: 'nowrap'
                             }}>
                                 <span style={{ fontWeight: 300 }}>{t('Life Path')}</span>
                                 <span style={{ fontWeight: 800 }}>
@@ -906,12 +908,12 @@ export default function Calculator() {
                         </button>
                     </div>
 
-                    <h2 style={{ fontSize: '1.5rem', fontWeight: 700, margin: 'var(--spacing-sm) 0 0 0', color: 'var(--text-main)' }}>{selectedEntityName}</h2>
+                    <h2 style={{ fontSize: 'clamp(1.15rem, 4vw, 1.5rem)', fontWeight: 700, margin: 'var(--spacing-sm) 0 0 0', color: 'var(--text-main)', padding: '0 44px', textAlign: 'center', wordBreak: 'break-word' }}>{selectedEntityName}</h2>
                 </div>
             )}
 
             {/* Middle: Date Selector Box */}
-            <div className="card" style={{ width: '100%', maxWidth: '700px', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 'var(--spacing-xl) var(--spacing-lg) 38px var(--spacing-lg)', gap: 'var(--spacing-xl)', position: 'relative' }}>
+            <div className="card date-selector-card" style={{ width: '100%', maxWidth: '700px', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 'var(--spacing-xl) var(--spacing-lg) 38px var(--spacing-lg)', gap: 'var(--spacing-xl)', position: 'relative' }}>
                 {/* Day */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <input
@@ -925,9 +927,9 @@ export default function Calculator() {
                         onFocus={(e) => e.target.select()}
                         placeholder={isExactDateUnknownEffective && !day ? "?" : "DD"}
                         style={{
-                            fontSize: 'clamp(1.8rem, 8vw, 2.5rem)',
+                            fontSize: 'clamp(1.6rem, 7vw, 2.5rem)',
                             color: 'var(--text-secondary)',
-                            width: '60px',
+                            width: 'clamp(44px, 14vw, 60px)',
                             background: 'transparent',
                             border: 'none',
                             outline: 'none',
@@ -937,7 +939,7 @@ export default function Calculator() {
                     />
                 </div>
 
-                <div style={{ fontSize: 'clamp(1.8rem, 8vw, 2.5rem)', fontWeight: 300, color: 'var(--border-color)' }}>/</div>
+                <div style={{ fontSize: 'clamp(1.6rem, 7vw, 2.5rem)', fontWeight: 300, color: 'var(--border-color)' }}>/</div>
 
                 {/* Month */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
@@ -952,9 +954,9 @@ export default function Calculator() {
                         onFocus={(e) => e.target.select()}
                         placeholder={isExactDateUnknownEffective && !month ? "?" : "MM"}
                         style={{
-                            fontSize: 'clamp(1.8rem, 8vw, 2.5rem)',
+                            fontSize: 'clamp(1.6rem, 7vw, 2.5rem)',
                             color: 'var(--text-secondary)',
-                            width: '60px',
+                            width: 'clamp(44px, 14vw, 60px)',
                             background: 'transparent',
                             border: 'none',
                             outline: 'none',
@@ -1006,7 +1008,7 @@ export default function Calculator() {
                     </div>
                 </div>
 
-                <div style={{ fontSize: 'clamp(1.8rem, 8vw, 2.5rem)', fontWeight: 300, color: 'var(--border-color)' }}>/</div>
+                <div style={{ fontSize: 'clamp(1.6rem, 7vw, 2.5rem)', fontWeight: 300, color: 'var(--border-color)' }}>/</div>
 
                 {/* Year */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -1020,9 +1022,9 @@ export default function Calculator() {
                         onFocus={(e) => e.target.select()}
                         placeholder={isExactDateUnknownEffective && !year ? "?" : "YYYY"}
                         style={{
-                            fontSize: 'clamp(1.8rem, 8vw, 2.5rem)',
+                            fontSize: 'clamp(1.6rem, 7vw, 2.5rem)',
                             color: 'var(--text-secondary)',
-                            width: '100px',
+                            width: 'clamp(76px, 22vw, 100px)',
                             background: 'transparent',
                             border: 'none',
                             outline: 'none',
@@ -1070,36 +1072,36 @@ export default function Calculator() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(8px, 2vw, var(--spacing-md))', width: '100%', maxWidth: '700px' }}>
 
                     {/* Sky Sign Card */}
-                    <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'relative', minWidth: 0 }}>
                         <div className="card" style={{
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            padding: 'clamp(8px, 2vw, var(--spacing-xl)) clamp(4px, 1vw, var(--spacing-lg))',
+                            padding: 'clamp(12px, 3vw, var(--spacing-xl)) clamp(6px, 1.5vw, var(--spacing-lg))',
                             textAlign: 'center',
                             height: '100%'
                         }}>
-                            <div style={{ fontSize: 'clamp(1.8rem, 6vw, 3rem)', lineHeight: 1, filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))', marginBottom: 'var(--spacing-sm)' }}>
+                            <div style={{ fontSize: 'clamp(2rem, 6.5vw, 3rem)', lineHeight: 1, filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))', marginBottom: 'var(--spacing-sm)' }}>
                                 {reading.skySign.emoji}
                             </div>
-                            <div style={{ fontSize: 'clamp(0.8rem, 3.5vw, 1.5rem)', fontWeight: 500, margin: 'var(--spacing-xs) 0', color: 'var(--text-main)', wordBreak: 'break-word' }}>
+                            <div style={{ fontSize: 'clamp(0.85rem, 3.2vw, 1.5rem)', fontWeight: 500, margin: 'var(--spacing-xs) 0', color: 'var(--text-main)', wordBreak: 'break-word' }}>
                                 {t(reading.skySign.name)}
                             </div>
-                            <div style={{ fontStyle: 'italic', color: 'var(--text-secondary)', fontSize: 'clamp(0.6rem, 2.5vw, 0.9rem)' }}>
+                            <div style={{ fontStyle: 'italic', color: 'var(--text-secondary)', fontSize: 'clamp(0.65rem, 2.4vw, 0.9rem)' }}>
                                 {getOrdinal(reading.skySignIndex, language)} {t('sign')}
                             </div>
                         </div>
                     </div>
 
                     {/* Secondary Energy Card */}
-                    <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'relative', minWidth: 0 }}>
                         <div className="card" style={{
-                            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px, 2vw, var(--spacing-xl)) clamp(4px, 1vw, var(--spacing-lg))', textAlign: 'center',
+                            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(12px, 3vw, var(--spacing-xl)) clamp(6px, 1.5vw, var(--spacing-lg))', textAlign: 'center',
                             height: '100%'
                         }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: 'var(--spacing-xs)' }}>
-                                <div style={{ fontSize: 'clamp(1.2rem, 5vw, 3rem)', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
+                                <div style={{ fontSize: 'clamp(1.35rem, 5.5vw, 3rem)', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1 }}>
                                     {reading.day !== reading.dayReduced ? (
                                         <>
                                             <span style={{ color: 'var(--text-tertiary)' }}>{reading.day}</span>
@@ -1109,57 +1111,52 @@ export default function Calculator() {
                                     ) : reading.dayReduced}
                                 </div>
                             </div>
-                            <div style={{ fontSize: 'clamp(0.7rem, 2.5vw, 1.1rem)', fontWeight: 400, color: 'var(--text-secondary)', marginBottom: 'var(--spacing-lg)', whiteSpace: 'nowrap' }}>
+                            <div style={{ fontSize: 'clamp(0.68rem, 2.3vw, 1.05rem)', fontWeight: 400, color: 'var(--text-secondary)', marginBottom: 'clamp(8px, 2.5vw, var(--spacing-lg))', lineHeight: 1.2 }}>
                                 {t('sec. energy')}
                             </div>
-                            <div style={{ fontStyle: 'italic', color: 'var(--text-tertiary)', fontSize: 'clamp(0.6rem, 2vw, 0.9rem)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                            <div style={{ fontStyle: 'italic', color: 'var(--text-tertiary)', fontSize: 'clamp(0.62rem, 2.1vw, 0.9rem)', display: 'flex', flexDirection: 'column', gap: '3px' }}>
                                 {(() => {
                                     const age = calculateAge({ year: Number(year), month: Number(month), day: Number(day) });
-                                    const isLuckyAge = age === reading.luckyNumber.base || age === reading.luckyNumber.flipped;
                                     return (
-                                        <div style={{ color: isLuckyAge ? 'var(--accent-gold)' : 'var(--primary-color)', fontWeight: 600, fontStyle: 'normal', marginBottom: '2px' }}>
+                                        <div style={{ color: 'var(--primary-color)', fontWeight: 600, fontStyle: 'normal', marginBottom: '2px' }}>
                                             {t('years old').replace('{age}', age.toString())}
                                         </div>
                                     );
                                 })()}
-                                {(() => {
-                                    const isLuckyDayOfYear = reading.dayOfYear === reading.luckyNumber.base || reading.dayOfYear === reading.luckyNumber.flipped;
-                                    return (
-                                        <div style={{ 
-                                            color: isLuckyDayOfYear ? 'var(--accent-gold)' : 'inherit', 
-                                            fontWeight: isLuckyDayOfYear ? 600 : 'inherit', 
-                                            fontStyle: isLuckyDayOfYear ? 'normal' : 'italic' 
-                                        }}>
-                                            {getOrdinal(reading.dayOfYear, language)} {t('day')}
-                                        </div>
-                                    );
-                                })()}
+                                <div>{getOrdinal(reading.dayOfYear, language)} {t('day')}</div>
                                 <div>{getOrdinal(reading.weekOfYear, language)} {t('week')}</div>
                             </div>
                         </div>
                     </div>
 
                     {/* Earth Sign Card */}
-                    <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'relative', minWidth: 0 }}>
                         <div className="card" style={{
-                            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(8px, 2vw, var(--spacing-xl)) clamp(4px, 1vw, var(--spacing-lg))', textAlign: 'center',
+                            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'clamp(12px, 3vw, var(--spacing-xl)) clamp(6px, 1.5vw, var(--spacing-lg))', textAlign: 'center',
                             border: (showCompatOutlines && reading.yearSignVsTodayColor) ? `2px solid ${reading.yearSignVsTodayColor}` : undefined,
                             transition: 'border-color 0.3s ease',
                             height: '100%'
                         }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', marginBottom: 'var(--spacing-sm)' }}>
-                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '-10px' }}>
-                                    <span style={{ fontSize: 'clamp(0.8rem, 3.5vw, 1.2rem)' }}>{reading.element.emoji}</span>
-                                    <span style={{ fontSize: 'clamp(0.4rem, 2vw, 0.6rem)', textTransform: 'uppercase', color: 'var(--text-tertiary)', fontWeight: 600 }}>{t(reading.element.name)}</span>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'clamp(2px, 1vw, 6px)', marginBottom: 'var(--spacing-sm)' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '-6px' }}>
+                                    <span style={{ fontSize: 'clamp(0.85rem, 3vw, 1.2rem)' }}>{reading.element.emoji}</span>
+                                    <span style={{ fontSize: 'clamp(0.45rem, 1.8vw, 0.6rem)', textTransform: 'uppercase', color: 'var(--text-tertiary)', fontWeight: 600 }}>{t(reading.element.name)}</span>
                                 </div>
-                                <div style={{ transform: 'scale(clamp(0.6, 2.5vw, 1))', transformOrigin: 'center' }}>
-                                    <EarthSignEmoji sign={reading.earthSign} size={48} />
-                                </div>
+                                <span style={{
+                                    fontSize: 'clamp(1.9rem, 6.5vw, 3rem)',
+                                    lineHeight: 1,
+                                    filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                    {reading.earthSign.emoji}
+                                </span>
                             </div>
-                            <div style={{ fontSize: 'clamp(0.8rem, 3.5vw, 1.5rem)', fontWeight: 500, margin: 'var(--spacing-xs) 0', color: 'var(--text-main)', wordBreak: 'break-word' }}>
+                            <div style={{ fontSize: 'clamp(0.85rem, 3.2vw, 1.5rem)', fontWeight: 500, margin: 'var(--spacing-xs) 0', color: 'var(--text-main)', wordBreak: 'break-word' }}>
                                 {t(reading.earthSign.name)}
                             </div>
-                            <div style={{ fontStyle: 'italic', color: 'var(--text-secondary)', fontSize: 'clamp(0.6rem, 2.5vw, 0.9rem)' }}>
+                            <div style={{ fontStyle: 'italic', color: 'var(--text-secondary)', fontSize: 'clamp(0.65rem, 2.4vw, 0.9rem)' }}>
                                 {getOrdinal(reading.earthSignIndex, language)} {t('Earth Year Sign').toLowerCase()}
                             </div>
                         </div>
@@ -1223,7 +1220,7 @@ export default function Calculator() {
                     </div>
 
                     {/* Cycles Card */}
-                    <div className="card" style={{ gridColumn: '1 / -1', padding: 'var(--spacing-xl)', marginTop: 'var(--spacing-md)' }}>
+                    <div className="card" style={{ gridColumn: '1 / -1', padding: 'clamp(16px, 4vw, var(--spacing-xl))', marginTop: 'var(--spacing-md)' }}>
                         {reading.endCycles ? (
                             <div style={{ textAlign: 'center', fontSize: '1.2rem', lineHeight: '1.8', color: 'var(--text-main)' }}>
                                 {language === 'fr' ? (
@@ -1246,8 +1243,8 @@ export default function Calculator() {
                             <>
                                 {/* Universal Cycles Section */}
                                 <div style={{ marginBottom: 'var(--spacing-xl)', paddingBottom: 'var(--spacing-lg)', borderBottom: '1px solid var(--border-color)' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-lg)' }}>
-                                        <h3 style={{ color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '1rem', margin: 0 }}>
+                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-lg)', flexWrap: 'wrap', textAlign: 'center' }}>
+                                        <h3 style={{ color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: 'clamp(0.85rem, 3vw, 1rem)', margin: 0 }}>
                                             {t('Current Universal Cycles')}
                                         </h3>
                                         {reading.isLuckyCurrentYear && (
@@ -1256,26 +1253,26 @@ export default function Calculator() {
                                             </div>
                                         )}
                                     </div>
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 'var(--spacing-lg)', textAlign: 'center' }}>
-                                        <div style={{ flex: '1 1 120px', maxWidth: '300px' }}>
-                                            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>{t('Universal Year')}</div>
-                                            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(8px, 2.5vw, var(--spacing-lg))', textAlign: 'center' }}>
+                                        <div style={{ minWidth: 0 }}>
+                                            <div style={{ fontSize: 'clamp(0.68rem, 2.3vw, 0.85rem)', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>{t('Universal Year')}</div>
+                                            <div style={{ fontSize: 'clamp(1.6rem, 6vw, 2.5rem)', fontWeight: 800, color: 'var(--text-main)' }}>
                                                 {reading.universalCycles.universalYear}
                                             </div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '4px' }}>{t('For the world in')} {reading.currentYear}</div>
+                                            <div style={{ fontSize: 'clamp(0.68rem, 2.2vw, 0.8rem)', color: 'var(--text-tertiary)', marginTop: '4px' }}>{t('For the world in')} {reading.currentYear}</div>
                                         </div>
 
-                                        <div style={{ flex: '1 1 120px', maxWidth: '300px' }}>
-                                            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>{t('Universal Month')}</div>
-                                            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-main)' }}>{reading.universalCycles.universalMonth}</div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '4px' }}>
+                                        <div style={{ minWidth: 0 }}>
+                                            <div style={{ fontSize: 'clamp(0.68rem, 2.3vw, 0.85rem)', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>{t('Universal Month')}</div>
+                                            <div style={{ fontSize: 'clamp(1.6rem, 6vw, 2.5rem)', fontWeight: 800, color: 'var(--text-main)' }}>{reading.universalCycles.universalMonth}</div>
+                                            <div style={{ fontSize: 'clamp(0.68rem, 2.2vw, 0.8rem)', color: 'var(--text-tertiary)', marginTop: '4px' }}>
                                                 {t('For')} {new Date(2000, new Date().getMonth(), 1).toLocaleString(language === 'fr' ? 'fr-FR' : 'en-US', { month: 'long' })}
                                             </div>
                                         </div>
 
-                                        <div style={{ flex: '1 1 120px', maxWidth: '300px' }}>
-                                            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>{t('Universal Day')}</div>
-                                            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                                        <div style={{ minWidth: 0 }}>
+                                            <div style={{ fontSize: 'clamp(0.68rem, 2.3vw, 0.85rem)', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>{t('Universal Day')}</div>
+                                            <div style={{ fontSize: 'clamp(1.6rem, 6vw, 2.5rem)', fontWeight: 800, color: 'var(--text-main)' }}>
                                                 {reading.universalCycles.universalDayUnreduced !== reading.universalCycles.universalDay && typeof reading.universalCycles.universalDay !== 'string' ? (
                                                     <>
                                                         <span style={{ color: 'var(--text-tertiary)' }}>{reading.universalCycles.universalDayUnreduced}</span>
@@ -1284,9 +1281,9 @@ export default function Calculator() {
                                                     </>
                                                 ) : reading.universalCycles.universalDay}
                                             </div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '4px' }}>{t('For today')} ({new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', { month: 'short', day: 'numeric' })})</div>
+                                            <div style={{ fontSize: 'clamp(0.68rem, 2.2vw, 0.8rem)', color: 'var(--text-tertiary)', marginTop: '4px' }}>{t('For today')} ({new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', { month: 'short', day: 'numeric' })})</div>
                                             {reading.isLuckyToday && (
-                                                <div style={{ marginTop: '8px', color: 'var(--accent-gold)', fontWeight: 600, fontSize: '0.85rem' }}>
+                                                <div style={{ marginTop: '8px', color: 'var(--accent-gold)', fontWeight: 600, fontSize: 'clamp(0.72rem, 2.3vw, 0.85rem)' }}>
                                                     ✨ {t('Lucky Day')}
                                                 </div>
                                             )}
@@ -1321,15 +1318,15 @@ export default function Calculator() {
 
                                 {showPersonalCycles && (
                                     <div className="animate-fade-in" style={{ marginTop: 'var(--spacing-xl)', paddingTop: 'var(--spacing-lg)', borderTop: '1px solid var(--border-color)' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-lg)' }}>
-                                            <h3 style={{ color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '1rem', margin: 0 }}>
+                                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-lg)', flexWrap: 'wrap', textAlign: 'center' }}>
+                                            <h3 style={{ color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: 'clamp(0.85rem, 3vw, 1rem)', margin: 0 }}>
                                                 {t('Current Personal Cycles')}
                                             </h3>
                                         </div>
-                                        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 'var(--spacing-lg)', textAlign: 'center' }}>
-                                            <div style={{ flex: '1 1 120px', maxWidth: '300px' }}>
-                                                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>{t('Personal Year')}</div>
-                                                <div style={{ fontSize: '2.5rem', fontWeight: 800, color: getCycleColor(reading.personalCycles.personalYear, reading.lifepath) }}>
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(8px, 2.5vw, var(--spacing-lg))', textAlign: 'center' }}>
+                                            <div style={{ minWidth: 0 }}>
+                                                <div style={{ fontSize: 'clamp(0.68rem, 2.3vw, 0.85rem)', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>{t('Personal Year')}</div>
+                                                <div style={{ fontSize: 'clamp(1.6rem, 6vw, 2.5rem)', fontWeight: 800, color: getCycleColor(reading.personalCycles.personalYear, reading.lifepath) }}>
                                                     {reading.personalCycles.personalYearUnreduced !== reading.personalCycles.personalYear && typeof reading.personalCycles.personalYear !== 'string' ? (
                                                         <>
                                                             <span style={{ color: 'var(--text-tertiary)' }}>{reading.personalCycles.personalYearUnreduced}</span>
@@ -1338,27 +1335,27 @@ export default function Calculator() {
                                                         </>
                                                     ) : reading.personalCycles.personalYear}
                                                 </div>
-                                                <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '4px' }}>
+                                                <div style={{ fontSize: 'clamp(0.68rem, 2.2vw, 0.8rem)', color: 'var(--text-tertiary)', marginTop: '4px' }}>
                                                     {language === 'fr' 
                                                         ? `A commencé à l'anniversaire en ${reading.personalCycles.lastBirthdayYear}` 
                                                         : `${t('Started on your')} ${reading.personalCycles.lastBirthdayYear} ${t('birthday')}`}
                                                 </div>
                                             </div>
 
-                                            <div style={{ flex: '1 1 120px', maxWidth: '300px' }}>
-                                                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>{t('Personal Month')}</div>
-                                                <div style={{ fontSize: '2.5rem', fontWeight: 800, color: getCycleColor(reading.personalCycles.personalMonth, reading.lifepath) }}>{reading.personalCycles.personalMonth}</div>
-                                                <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '4px' }}>
+                                            <div style={{ minWidth: 0 }}>
+                                                <div style={{ fontSize: 'clamp(0.68rem, 2.3vw, 0.85rem)', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>{t('Personal Month')}</div>
+                                                <div style={{ fontSize: 'clamp(1.6rem, 6vw, 2.5rem)', fontWeight: 800, color: getCycleColor(reading.personalCycles.personalMonth, reading.lifepath) }}>{reading.personalCycles.personalMonth}</div>
+                                                <div style={{ fontSize: 'clamp(0.68rem, 2.2vw, 0.8rem)', color: 'var(--text-tertiary)', marginTop: '4px' }}>
                                                     {language === 'fr' 
                                                         ? `Basé sur le cycle ${new Date(2000, reading.personalCycles.effectiveMonth - 1, 1).toLocaleString('fr-FR', { month: 'long' })}` 
                                                         : `${t('Based on')} ${new Date(2000, reading.personalCycles.effectiveMonth - 1, 1).toLocaleString('en-US', { month: 'long' })} ${t('cycle')}`}
                                                 </div>
                                             </div>
 
-                                            <div style={{ flex: '1 1 120px', maxWidth: '300px' }}>
-                                                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>{t('Personal Day')}</div>
-                                                <div style={{ fontSize: '2.5rem', fontWeight: 800, color: getCycleColor(reading.personalCycles.personalDay, reading.lifepath) }}>{reading.personalCycles.personalDay}</div>
-                                                <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '4px' }}>{t('For today')} ({new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', { month: 'short', day: 'numeric' })})</div>
+                                            <div style={{ minWidth: 0 }}>
+                                                <div style={{ fontSize: 'clamp(0.68rem, 2.3vw, 0.85rem)', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>{t('Personal Day')}</div>
+                                                <div style={{ fontSize: 'clamp(1.6rem, 6vw, 2.5rem)', fontWeight: 800, color: getCycleColor(reading.personalCycles.personalDay, reading.lifepath) }}>{reading.personalCycles.personalDay}</div>
+                                                <div style={{ fontSize: 'clamp(0.68rem, 2.2vw, 0.8rem)', color: 'var(--text-tertiary)', marginTop: '4px' }}>{t('For today')} ({new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', { month: 'short', day: 'numeric' })})</div>
                                             </div>
                                         </div>
                                     </div>
@@ -1391,11 +1388,11 @@ export default function Calculator() {
                     </div>
 
                     {/* Personality Profile Section */}
-                    <div className="card" style={{ gridColumn: '1 / -1', padding: 'var(--spacing-xl)', marginTop: 'var(--spacing-md)' }}>
+                    <div className="card" style={{ gridColumn: '1 / -1', padding: 'clamp(14px, 3.5vw, var(--spacing-xl))', marginTop: 'var(--spacing-md)' }}>
                         <h3 style={{ color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '1.1rem', margin: '0 0 var(--spacing-lg) 0', textAlign: 'center' }}>
                             {t('Personality Profile')}
                         </h3>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--spacing-lg)' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: 'var(--spacing-lg)' }}>
                             
                             {/* Life Path Traits */}
                             <div style={{ background: 'var(--bg-main)', padding: 'var(--spacing-lg)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>

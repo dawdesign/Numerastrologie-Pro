@@ -717,7 +717,7 @@ export default function Calendar() {
                                             </div>
                                             <div style={{ minWidth: 0, overflow: 'hidden' }}>
                                                 <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', color: 'var(--text-secondary)', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t('Age')}</div>
-                                                <div style={{ fontSize: 'clamp(1.25rem, 2.2vw, 1.5rem)', fontWeight: 800, color: '#ffffff', lineHeight: 1.1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                                <div style={{ fontSize: 'clamp(1.25rem, 2.2vw, 1.5rem)', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                                     {age}
                                                 </div>
                                             </div>
