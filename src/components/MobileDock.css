@@ -41,11 +41,11 @@
     }
 
     .app-main-content {
-        padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+        padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)) !important;
     }
 
     .app-footer {
-        padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px)) !important;
+        padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
     }
 
     /* Dock wrapper positioned above the viewport bottom with safe-area spacing */
@@ -59,7 +59,7 @@
         justify-content: center;
         pointer-events: none;
         padding: 0 12px;
-        padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+        padding-bottom: max(4px, calc(2px + env(safe-area-inset-bottom, 0px)));
     }
 
     .dock-pill {
