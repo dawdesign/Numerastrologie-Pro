@@ -168,86 +168,93 @@ export default function Calendar() {
     return (
         <div className="animate-fade-in matrix-calendar-wrapper">
 
-            {/* Top Bar: Title & Compact Profile Banner */}
+            {/* Top Bar: Title */}
             <div style={{ 
                 display: 'flex', 
                 justifyContent: 'space-between', 
                 alignItems: 'center', 
                 flexWrap: 'wrap', 
                 gap: '12px',
-                marginBottom: '4px' 
+                marginBottom: '8px' 
             }}>
                 <h1 style={{ margin: 0, fontSize: 'clamp(1.25rem, 2.5vw, 1.7rem)', fontWeight: 800 }}>
                     {t('Matrix Calendar')}
                 </h1>
+            </div>
 
-                {exportedProfile && (
-                    <div
-                        onClick={() => navigate('/')}
-                        title={language === 'fr' ? 'Cliquer pour changer de profil' : 'Click to change profile'}
-                        className="exported-profile-banner"
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.35)';
-                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.16)';
-                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
-                        }}
-                    >
-                        {/* Left: Title & Formatted Date with Calendar Icon */}
-                        <div className="exported-profile-left">
-                            <div className="exported-profile-left-texts">
-                                <span className="exported-profile-label">
-                                    {language === 'fr' ? 'PROFIL EXPORTÉ' : 'EXPORTED PROFILE'}
-                                </span>
-                                <div className="exported-profile-date">
-                                    <span style={{ fontSize: '16px', lineHeight: 1, display: 'inline-flex', alignItems: 'center' }}>🗓️</span>
-                                    <span>
-                                        {(() => {
-                                            try {
-                                                return new Date(exportedProfile.year, exportedProfile.month - 1, exportedProfile.day).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', {
-                                                    day: 'numeric',
-                                                    month: 'long',
-                                                    year: 'numeric'
-                                                });
-                                            } catch {
-                                                return `${exportedProfile.day} / ${exportedProfile.month} / ${exportedProfile.year}`;
-                                            }
-                                        })()}
-                                    </span>
-                                </div>
+            {/* Exported Profile Banner (Full Width edge to edge matching calendar boxes) */}
+            {exportedProfile && (
+                <div
+                    onClick={() => navigate('/')}
+                    title={language === 'fr' ? 'Cliquer pour changer de profil' : 'Click to change profile'}
+                    className="exported-profile-banner"
+                    onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.35)';
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.16)';
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+                    }}
+                >
+                    {/* Profile Name or Date */}
+                    {exportedProfile.name ? (
+                        <div className="exported-profile-item" style={{ maxWidth: '170px', overflow: 'hidden' }}>
+                            <span className="exported-profile-label">
+                                {language === 'fr' ? 'PROFIL' : 'PROFILE'}
+                            </span>
+                            <div className="exported-profile-stat-val" style={{ fontWeight: 800, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={exportedProfile.name}>
+                                {exportedProfile.name}
                             </div>
                         </div>
-
-                        {/* Right: Chemin de vie & Signe de terre */}
-                        <div className="exported-profile-stats">
-                            {/* Chemin de vie */}
-                            <div className="exported-profile-stat-col">
-                                <span className="exported-profile-label">
-                                    {language === 'fr' ? 'CHEMIN DE VIE' : 'LIFE PATH'}
+                    ) : (
+                        <div className="exported-profile-item">
+                            <span className="exported-profile-label">
+                                {language === 'fr' ? 'DATE DE NAISSANCE' : 'BIRTH DATE'}
+                            </span>
+                            <div className="exported-profile-date">
+                                <span style={{ fontSize: '15px', lineHeight: 1, display: 'inline-flex', alignItems: 'center' }}>🗓️</span>
+                                <span>
+                                    {(() => {
+                                        try {
+                                            return new Date(exportedProfile.year, exportedProfile.month - 1, exportedProfile.day).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', {
+                                                day: 'numeric',
+                                                month: 'short',
+                                                year: 'numeric'
+                                            });
+                                        } catch {
+                                            return `${exportedProfile.day}/${exportedProfile.month}/${exportedProfile.year}`;
+                                        }
+                                    })()}
                                 </span>
-                                <div className="exported-profile-stat-val" style={{ fontSize: 'clamp(0.95rem, 2.8vw, 1.15rem)', fontWeight: 800 }}>
-                                    {exportedProfile.lifepath}
-                                </div>
                             </div>
+                        </div>
+                    )}
 
-                            {/* Signe de terre */}
-                            <div className="exported-profile-stat-col">
-                                <span className="exported-profile-label">
-                                    {language === 'fr' ? 'SIGNE DE TERRE' : 'EARTH SIGN'}
-                                </span>
-                                <div className="exported-profile-stat-val">
-                                    <EarthSignEmoji sign={exportedProfile.earthSign} size={16} />
-                                    <span>
-                                        {t(exportedProfile.earthSign.name)}
-                                    </span>
-                                </div>
-                            </div>
+                    {/* Chemin de vie */}
+                    <div className="exported-profile-item">
+                        <span className="exported-profile-label">
+                            {language === 'fr' ? 'CHEMIN DE VIE' : 'LIFE PATH'}
+                        </span>
+                        <div className="exported-profile-stat-val" style={{ fontSize: 'clamp(0.95rem, 2.5vw, 1.15rem)', fontWeight: 800 }}>
+                            {exportedProfile.lifepath}
                         </div>
                     </div>
-                )}
-            </div>
+
+                    {/* Signe de terre */}
+                    <div className="exported-profile-item">
+                        <span className="exported-profile-label">
+                            {language === 'fr' ? 'SIGNE DE TERRE' : 'EARTH SIGN'}
+                        </span>
+                        <div className="exported-profile-stat-val">
+                            <EarthSignEmoji sign={exportedProfile.earthSign} size={16} />
+                            <span>
+                                {t(exportedProfile.earthSign.name)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Harmonious Dual-Box Layout: Calendar Grid (Left) + Description Panel (Right) */}
             <div className="matrix-calendar-layout">

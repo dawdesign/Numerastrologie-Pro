@@ -1242,7 +1242,7 @@ export default function Calculator() {
                         ) : (
                             <>
                                 {/* Universal Cycles Section */}
-                                <div style={{ marginBottom: 'var(--spacing-xl)', paddingBottom: 'var(--spacing-lg)', borderBottom: '1px solid var(--border-color)' }}>
+                                <div style={{ marginBottom: 0, paddingBottom: 0, borderBottom: 'none' }}>
                                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-lg)', flexWrap: 'wrap', textAlign: 'center' }}>
                                         <h3 style={{ color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: 'clamp(0.85rem, 3vw, 1rem)', margin: 0 }}>
                                             {t('Current Universal Cycles')}
@@ -1254,25 +1254,35 @@ export default function Calculator() {
                                         )}
                                     </div>
                                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(8px, 2.5vw, var(--spacing-lg))', textAlign: 'center' }}>
-                                        <div style={{ minWidth: 0 }}>
-                                            <div style={{ fontSize: 'clamp(0.68rem, 2.3vw, 0.85rem)', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>{t('Universal Year')}</div>
-                                            <div style={{ fontSize: 'clamp(1.6rem, 6vw, 2.5rem)', fontWeight: 800, color: 'var(--text-main)' }}>
+                                        <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                            <div style={{ fontSize: 'clamp(0.68rem, 2.3vw, 0.85rem)', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600, minHeight: '2.4em', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+                                                {t('Universal Year')}
+                                            </div>
+                                            <div style={{ fontSize: 'clamp(1.6rem, 6vw, 2.5rem)', fontWeight: 800, color: 'var(--text-main)', minHeight: '1.2em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                 {reading.universalCycles.universalYear}
                                             </div>
-                                            <div style={{ fontSize: 'clamp(0.68rem, 2.2vw, 0.8rem)', color: 'var(--text-tertiary)', marginTop: '4px' }}>{t('For the world in')} {reading.currentYear}</div>
+                                            <div style={{ fontSize: 'clamp(0.68rem, 2.2vw, 0.8rem)', color: 'var(--text-tertiary)', marginTop: '4px', minHeight: '2.4em', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', textAlign: 'center' }}>
+                                                {t('For the world in')} {reading.currentYear}
+                                            </div>
                                         </div>
 
-                                        <div style={{ minWidth: 0 }}>
-                                            <div style={{ fontSize: 'clamp(0.68rem, 2.3vw, 0.85rem)', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>{t('Universal Month')}</div>
-                                            <div style={{ fontSize: 'clamp(1.6rem, 6vw, 2.5rem)', fontWeight: 800, color: 'var(--text-main)' }}>{reading.universalCycles.universalMonth}</div>
-                                            <div style={{ fontSize: 'clamp(0.68rem, 2.2vw, 0.8rem)', color: 'var(--text-tertiary)', marginTop: '4px' }}>
+                                        <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                            <div style={{ fontSize: 'clamp(0.68rem, 2.3vw, 0.85rem)', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600, minHeight: '2.4em', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+                                                {t('Universal Month')}
+                                            </div>
+                                            <div style={{ fontSize: 'clamp(1.6rem, 6vw, 2.5rem)', fontWeight: 800, color: 'var(--text-main)', minHeight: '1.2em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                {reading.universalCycles.universalMonth}
+                                            </div>
+                                            <div style={{ fontSize: 'clamp(0.68rem, 2.2vw, 0.8rem)', color: 'var(--text-tertiary)', marginTop: '4px', minHeight: '2.4em', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', textAlign: 'center' }}>
                                                 {t('For')} {new Date(2000, new Date().getMonth(), 1).toLocaleString(language === 'fr' ? 'fr-FR' : 'en-US', { month: 'long' })}
                                             </div>
                                         </div>
 
-                                        <div style={{ minWidth: 0 }}>
-                                            <div style={{ fontSize: 'clamp(0.68rem, 2.3vw, 0.85rem)', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>{t('Universal Day')}</div>
-                                            <div style={{ fontSize: 'clamp(1.6rem, 6vw, 2.5rem)', fontWeight: 800, color: 'var(--text-main)' }}>
+                                        <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                            <div style={{ fontSize: 'clamp(0.68rem, 2.3vw, 0.85rem)', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600, minHeight: '2.4em', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+                                                {t('Universal Day')}
+                                            </div>
+                                            <div style={{ fontSize: 'clamp(1.6rem, 6vw, 2.5rem)', fontWeight: 800, color: 'var(--text-main)', minHeight: '1.2em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                 {reading.universalCycles.universalDayUnreduced !== reading.universalCycles.universalDay && typeof reading.universalCycles.universalDay !== 'string' ? (
                                                     <>
                                                         <span style={{ color: 'var(--text-tertiary)' }}>{reading.universalCycles.universalDayUnreduced}</span>
@@ -1281,7 +1291,10 @@ export default function Calculator() {
                                                     </>
                                                 ) : reading.universalCycles.universalDay}
                                             </div>
-                                            <div style={{ fontSize: 'clamp(0.68rem, 2.2vw, 0.8rem)', color: 'var(--text-tertiary)', marginTop: '4px' }}>{t('For today')} ({new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', { month: 'short', day: 'numeric' })})</div>
+                                            <div style={{ fontSize: 'clamp(0.68rem, 2.2vw, 0.8rem)', color: 'var(--text-tertiary)', marginTop: '4px', minHeight: '2.4em', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', textAlign: 'center' }}>
+                                                <span>{t('For today')}</span>
+                                                <span>({new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', { month: 'short', day: 'numeric' })})</span>
+                                            </div>
                                             {reading.isLuckyToday && (
                                                 <div style={{ marginTop: '8px', color: 'var(--accent-gold)', fontWeight: 600, fontSize: 'clamp(0.72rem, 2.3vw, 0.85rem)' }}>
                                                     ✨ {t('Lucky Day')}
@@ -1317,16 +1330,13 @@ export default function Calculator() {
                                 </div>
 
                                 {showPersonalCycles && (
-                                    <div className="animate-fade-in" style={{ marginTop: 'var(--spacing-xl)', paddingTop: 'var(--spacing-lg)', borderTop: '1px solid var(--border-color)' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-lg)', flexWrap: 'wrap', textAlign: 'center' }}>
-                                            <h3 style={{ color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: 'clamp(0.85rem, 3vw, 1rem)', margin: 0 }}>
-                                                {t('Current Personal Cycles')}
-                                            </h3>
-                                        </div>
+                                    <div className="animate-fade-in" style={{ marginTop: 'var(--spacing-lg)' }}>
                                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(8px, 2.5vw, var(--spacing-lg))', textAlign: 'center' }}>
-                                            <div style={{ minWidth: 0 }}>
-                                                <div style={{ fontSize: 'clamp(0.68rem, 2.3vw, 0.85rem)', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>{t('Personal Year')}</div>
-                                                <div style={{ fontSize: 'clamp(1.6rem, 6vw, 2.5rem)', fontWeight: 800, color: getCycleColor(reading.personalCycles.personalYear, reading.lifepath) }}>
+                                            <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                                <div style={{ fontSize: 'clamp(0.68rem, 2.3vw, 0.85rem)', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600, minHeight: '2.4em', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+                                                    {t('Personal Year')}
+                                                </div>
+                                                <div style={{ fontSize: 'clamp(1.6rem, 6vw, 2.5rem)', fontWeight: 800, color: getCycleColor(reading.personalCycles.personalYear, reading.lifepath), minHeight: '1.2em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                     {reading.personalCycles.personalYearUnreduced !== reading.personalCycles.personalYear && typeof reading.personalCycles.personalYear !== 'string' ? (
                                                         <>
                                                             <span style={{ color: 'var(--text-tertiary)' }}>{reading.personalCycles.personalYearUnreduced}</span>
@@ -1335,27 +1345,38 @@ export default function Calculator() {
                                                         </>
                                                     ) : reading.personalCycles.personalYear}
                                                 </div>
-                                                <div style={{ fontSize: 'clamp(0.68rem, 2.2vw, 0.8rem)', color: 'var(--text-tertiary)', marginTop: '4px' }}>
+                                                <div style={{ fontSize: 'clamp(0.68rem, 2.2vw, 0.8rem)', color: 'var(--text-tertiary)', marginTop: '4px', minHeight: '2.4em', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', textAlign: 'center' }}>
                                                     {language === 'fr' 
                                                         ? `A commencé à l'anniversaire en ${reading.personalCycles.lastBirthdayYear}` 
                                                         : `${t('Started on your')} ${reading.personalCycles.lastBirthdayYear} ${t('birthday')}`}
                                                 </div>
                                             </div>
 
-                                            <div style={{ minWidth: 0 }}>
-                                                <div style={{ fontSize: 'clamp(0.68rem, 2.3vw, 0.85rem)', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>{t('Personal Month')}</div>
-                                                <div style={{ fontSize: 'clamp(1.6rem, 6vw, 2.5rem)', fontWeight: 800, color: getCycleColor(reading.personalCycles.personalMonth, reading.lifepath) }}>{reading.personalCycles.personalMonth}</div>
-                                                <div style={{ fontSize: 'clamp(0.68rem, 2.2vw, 0.8rem)', color: 'var(--text-tertiary)', marginTop: '4px' }}>
+                                            <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                                <div style={{ fontSize: 'clamp(0.68rem, 2.3vw, 0.85rem)', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600, minHeight: '2.4em', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+                                                    {t('Personal Month')}
+                                                </div>
+                                                <div style={{ fontSize: 'clamp(1.6rem, 6vw, 2.5rem)', fontWeight: 800, color: getCycleColor(reading.personalCycles.personalMonth, reading.lifepath), minHeight: '1.2em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                    {reading.personalCycles.personalMonth}
+                                                </div>
+                                                <div style={{ fontSize: 'clamp(0.68rem, 2.2vw, 0.8rem)', color: 'var(--text-tertiary)', marginTop: '4px', minHeight: '2.4em', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', textAlign: 'center' }}>
                                                     {language === 'fr' 
                                                         ? `Basé sur le cycle ${new Date(2000, reading.personalCycles.effectiveMonth - 1, 1).toLocaleString('fr-FR', { month: 'long' })}` 
                                                         : `${t('Based on')} ${new Date(2000, reading.personalCycles.effectiveMonth - 1, 1).toLocaleString('en-US', { month: 'long' })} ${t('cycle')}`}
                                                 </div>
                                             </div>
 
-                                            <div style={{ minWidth: 0 }}>
-                                                <div style={{ fontSize: 'clamp(0.68rem, 2.3vw, 0.85rem)', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600 }}>{t('Personal Day')}</div>
-                                                <div style={{ fontSize: 'clamp(1.6rem, 6vw, 2.5rem)', fontWeight: 800, color: getCycleColor(reading.personalCycles.personalDay, reading.lifepath) }}>{reading.personalCycles.personalDay}</div>
-                                                <div style={{ fontSize: 'clamp(0.68rem, 2.2vw, 0.8rem)', color: 'var(--text-tertiary)', marginTop: '4px' }}>{t('For today')} ({new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', { month: 'short', day: 'numeric' })})</div>
+                                            <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                                <div style={{ fontSize: 'clamp(0.68rem, 2.3vw, 0.85rem)', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: 'var(--spacing-xs)', fontWeight: 600, minHeight: '2.4em', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+                                                    {t('Personal Day')}
+                                                </div>
+                                                <div style={{ fontSize: 'clamp(1.6rem, 6vw, 2.5rem)', fontWeight: 800, color: getCycleColor(reading.personalCycles.personalDay, reading.lifepath), minHeight: '1.2em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                    {reading.personalCycles.personalDay}
+                                                </div>
+                                                <div style={{ fontSize: 'clamp(0.68rem, 2.2vw, 0.8rem)', color: 'var(--text-tertiary)', marginTop: '4px', minHeight: '2.4em', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', textAlign: 'center' }}>
+                                                    <span>{t('For today')}</span>
+                                                    <span>({new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', { month: 'short', day: 'numeric' })})</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

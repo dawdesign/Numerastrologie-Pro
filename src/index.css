@@ -497,74 +497,42 @@ p {
     }
 }
 
-/* Exported Profile Banner (Responsive Horizontal Layout) */
+/* Exported Profile Banner (Responsive Single-Line Horizontal Layout) */
 .exported-profile-banner {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
-    gap: clamp(10px, 2vw, 24px);
-    padding: clamp(8px, 1.8vw, 12px) clamp(12px, 2.5vw, 20px);
-    border-radius: 14px;
+    gap: clamp(12px, 2.5vw, 24px);
+    padding: clamp(8px, 1.4vw, 10px) clamp(14px, 2.5vw, 24px);
+    border-radius: var(--radius-lg);
     background: rgba(255, 255, 255, 0.03);
     border: 1px dashed rgba(255, 255, 255, 0.16);
     cursor: pointer;
     transition: all 0.2s ease;
     flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     box-sizing: border-box;
     width: 100%;
-    max-width: 100%;
+    margin-bottom: clamp(6px, 1.2vw, 10px);
 }
 
-.exported-profile-left {
-    display: flex;
-    align-items: center;
-    gap: clamp(8px, 1.8vw, 14px);
-    min-width: 0;
-    flex: 1 1 auto;
+.exported-profile-banner::-webkit-scrollbar {
+    display: none;
 }
 
-.exported-profile-left-texts {
+.exported-profile-item {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    gap: 3px;
-    min-width: 0;
-}
-
-.exported-profile-date {
-    font-size: clamp(0.78rem, 2.5vw, 0.95rem);
-    font-weight: 700;
-    color: var(--text-main, #fff);
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    line-height: 1;
-}
-
-.exported-profile-stats {
-    display: flex;
     align-items: flex-start;
-    gap: clamp(10px, 2.5vw, 28px);
-    flex-shrink: 0;
-    flex-wrap: nowrap;
-}
-
-.exported-profile-stat-col {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
     gap: 3px;
     flex-shrink: 0;
 }
 
 .exported-profile-label {
-    font-size: clamp(0.55rem, 1.6vw, 0.65rem);
+    font-size: clamp(0.55rem, 1.5vw, 0.62rem);
     font-weight: 700;
     letter-spacing: 0.06em;
     color: var(--text-tertiary, #888);
@@ -576,17 +544,17 @@ p {
     align-items: center;
 }
 
+.exported-profile-date,
 .exported-profile-stat-val {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 4px;
-    font-size: clamp(0.82rem, 2.4vw, 1rem);
+    gap: 5px;
+    font-size: clamp(0.82rem, 2.2vw, 0.95rem);
     font-weight: 700;
     color: var(--text-main, #fff);
     white-space: nowrap;
-    height: 24px;
-    line-height: 1;
+    line-height: 1.2;
+    height: 22px;
 }
 
 /* ============================================================
@@ -632,15 +600,7 @@ p {
 
 @media (max-width: 520px) {
     .exported-profile-banner {
-        flex-wrap: wrap;
-        gap: 8px 12px;
-    }
-
-    .exported-profile-stats {
-        width: 100%;
-        justify-content: space-between;
-        border-top: 1px solid var(--border-color);
-        padding-top: 6px;
+        gap: 12px;
     }
 }
 
