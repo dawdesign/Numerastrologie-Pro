@@ -322,9 +322,11 @@ export default function Calendar() {
                                     let isLucky = false;
                                     if (exportedProfile) {
                                         const dayOfYearNum = getDayOfYear(currentMonth, day, currentYear);
+                                        const { base: b, flipped: f } = exportedProfile.luckyNumber;
 
-                                        isLucky = unreduced === exportedProfile.luckyNumber.base || unreduced === exportedProfile.luckyNumber.flipped ||
-                                            dayOfYearNum === exportedProfile.luckyNumber.base || dayOfYearNum === exportedProfile.luckyNumber.flipped ||
+                                        isLucky = unreduced === b || unreduced === f ||
+                                            day === b || (f <= 31 && day === f) ||
+                                            dayOfYearNum === b || dayOfYearNum === f ||
                                             isLuckyDateMatch(currentMonth, day, exportedProfile.luckyNumber);
                                     }
 
@@ -584,6 +586,9 @@ export default function Calendar() {
 
                             if (dayReading.unreduced === b || dayReading.unreduced === f) {
                                 luckyReasons.push(language === 'en' ? <span>Day energy (<strong>{dayReading.unreduced}</strong>) matches <strong>{b}/{f}</strong></span> : <span>L'énergie du jour (<strong>{dayReading.unreduced}</strong>) correspond à <strong>{b}/{f}</strong></span>);
+                            }
+                            if (selectedDay === b || (f <= 31 && selectedDay === f)) {
+                                luckyReasons.push(language === 'en' ? <span>Day of the month (<strong>{selectedDay}</strong>) matches <strong>{b}/{f}</strong></span> : <span>Le jour du mois (<strong>{selectedDay}</strong>) correspond à <strong>{b}/{f}</strong></span>);
                             }
                             if (isLuckyDateMatch(currentMonth, selectedDay, exportedProfile.luckyNumber)) {
                                 const formattedD = selectedDay.toString().padStart(2, '0');
