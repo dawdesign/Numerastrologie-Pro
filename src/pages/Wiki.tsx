@@ -156,7 +156,7 @@ export default function Wiki() {
                         minHeight: 'clamp(36px, 6vw, 42px)'
                     }}
                 >
-                    {t('Earth / Vietnamese Signs')}
+                    {t('Chinese Astrology')}
                 </button>
                 <button
                     onClick={() => setActiveTab('sky')}

@@ -696,9 +696,9 @@ export default function Calendar() {
                                         </div>
                                     </div>
 
-                                    {/* Earth Month - Locked in free version */}
+                                    {/* Chinese Month - Locked in free version */}
                                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '8px 4px', minWidth: 0, overflow: 'hidden', justifyContent: 'center' }}>
-                                        <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', color: 'var(--text-secondary)', fontWeight: 600, marginBottom: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '100%' }}>{t('Earth Month')}</div>
+                                        <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', color: 'var(--text-secondary)', fontWeight: 600, marginBottom: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '100%' }}>{t('Chinese Month')}</div>
                                         <LockedBox size={22} style={{ padding: '4px' }} />
                                     </div>
 

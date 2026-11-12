@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { calculateLifePath, reduceNumber, MASTER_NUMBERS } from '../engine/numerology';
-import { getEarthSign, getEarthMonthSign, getWesternSign, EARTH_SIGNS, WESTERN_SIGNS } from '../engine/astrology';
+import { getEarthSign, getWesternSign, EARTH_SIGNS, WESTERN_SIGNS } from '../engine/astrology';
 import { EarthSignEmoji, SkySignEmoji } from '../components/ZodiacEmoji';
 import { useSettings } from '../context/SettingsContext';
 
@@ -13,7 +13,6 @@ type DateResult = {
     dayReduced: number;
     day: number;
     earthSign: typeof EARTH_SIGNS[0];
-    earthMonthSign: typeof EARTH_SIGNS[0];
     skySign: typeof WESTERN_SIGNS[0];
 };
 
@@ -23,7 +22,7 @@ interface FilterOption {
     emoji?: string;
 }
 
-type ModalType = 'lifepath' | 'secondary' | 'earthYear' | 'earthMonth' | 'skySign' | null;
+type ModalType = 'lifepath' | 'secondary' | 'earthYear' | 'skySign' | null;
 
 export default function Equation() {
     const { t, language } = useSettings();
@@ -74,17 +73,6 @@ export default function Equation() {
         }
     });
 
-    const [selectedEarthMonths, setSelectedEarthMonths] = useState<number[]>(() => {
-        try {
-            const stored = localStorage.getItem('eqSelectedEarthMonths');
-            if (stored) return JSON.parse(stored);
-            const oldSingle = localStorage.getItem('eqTargetEarthMonth');
-            return oldSingle !== null && oldSingle !== '' ? [parseInt(oldSingle, 10)] : [];
-        } catch {
-            return [];
-        }
-    });
-
     const [selectedSkySigns, setSelectedSkySigns] = useState<string[]>(() => {
         try {
             const stored = localStorage.getItem('eqSelectedSkySigns');
@@ -107,9 +95,8 @@ export default function Equation() {
         localStorage.setItem('eqSelectedLifePaths', JSON.stringify(selectedLifePaths));
         localStorage.setItem('eqSelectedSecondaryEnergies', JSON.stringify(selectedSecondaryEnergies));
         localStorage.setItem('eqSelectedEarthYears', JSON.stringify(selectedEarthYears));
-        localStorage.setItem('eqSelectedEarthMonths', JSON.stringify(selectedEarthMonths));
         localStorage.setItem('eqSelectedSkySigns', JSON.stringify(selectedSkySigns));
-    }, [selectedLifePaths, selectedSecondaryEnergies, selectedEarthYears, selectedEarthMonths, selectedSkySigns]);
+    }, [selectedLifePaths, selectedSecondaryEnergies, selectedEarthYears, selectedSkySigns]);
 
     // Lock body scroll when any filter modal is open, and handle Escape key
     useEffect(() => {
@@ -139,7 +126,6 @@ export default function Equation() {
         setSelectedLifePaths([]);
         setSelectedSecondaryEnergies([]);
         setSelectedEarthYears([]);
-        setSelectedEarthMonths([]);
         setSelectedSkySigns([]);
     };
 
@@ -147,7 +133,6 @@ export default function Equation() {
         selectedLifePaths.length + 
         selectedSecondaryEnergies.length + 
         selectedEarthYears.length + 
-        selectedEarthMonths.length + 
         selectedSkySigns.length;
 
     // Filter Options Definitions
@@ -175,12 +160,6 @@ export default function Equation() {
     }));
 
     const earthYearOptions: FilterOption[] = EARTH_SIGNS.map(sign => ({
-        id: sign.id,
-        label: t(sign.name),
-        emoji: sign.emoji
-    }));
-
-    const earthMonthOptions: FilterOption[] = EARTH_SIGNS.map(sign => ({
         id: sign.id,
         label: t(sign.name),
         emoji: sign.emoji
@@ -303,7 +282,6 @@ export default function Equation() {
                     const { lifepath, lifepathNumber, unreduced } = calculateLifePath(m, d, y);
                     const dayReduced = reduceNumber(d);
                     const earthSign = getEarthSign(y, m, d);
-                    const earthMonthSign = getEarthMonthSign(m, d);
                     const skySign = getWesternSign(m, d);
 
                     // 1. Life Path Filter (Multi-select)
@@ -333,14 +311,7 @@ export default function Equation() {
                         }
                     }
 
-                    // 4. Earth Month Filter (Multi-select)
-                    if (selectedEarthMonths.length > 0) {
-                        if (!selectedEarthMonths.includes(earthMonthSign.id)) {
-                            isValid = false;
-                        }
-                    }
-
-                    // 5. Sky Sign Filter (Multi-select)
+                    // 4. Sky Sign Filter (Multi-select)
                     if (selectedSkySigns.length > 0) {
                         if (!selectedSkySigns.includes(skySign.name)) {
                             isValid = false;
@@ -365,7 +336,6 @@ export default function Equation() {
                             dayReduced,
                             day: d,
                             earthSign,
-                            earthMonthSign,
                             skySign
                         });
 
@@ -528,14 +498,6 @@ export default function Equation() {
                     onChange: (sel: (string | number)[]) => setSelectedEarthYears(sel as number[]),
                     gridColumns: 2
                 };
-            case 'earthMonth':
-                return {
-                    title: t('Earth Month'),
-                    options: earthMonthOptions,
-                    selected: selectedEarthMonths,
-                    onChange: (sel: (string | number)[]) => setSelectedEarthMonths(sel as number[]),
-                    gridColumns: 2
-                };
             case 'skySign':
                 return {
                     title: t('Sky Sign'),
@@ -567,8 +529,8 @@ export default function Equation() {
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.88rem, 2.5vw, 1rem)', maxWidth: '560px', margin: '0 auto' }}>
                     {language === 'en'
-                        ? 'Find specific dates matching exact Numerology (Lifepath, Secondary Energy) and Astrology (Chinese Year, Earth Month, Sky Sign) filters within a designated timeframe.'
-                        : 'Trouvez des dates spécifiques selon les filtres précis de Numérologie (Chemin de vie, Énergie secondaire) et d\'Astrologie (Année chinoise, Mois de terre, Signe du ciel).'
+                        ? 'Find specific dates matching exact Numerology (Lifepath, Secondary Energy) and Astrology (Chinese Year, Sky Sign) filters within a designated timeframe.'
+                        : 'Trouvez des dates spécifiques selon les filtres précis de Numérologie (Chemin de vie, Énergie secondaire) et d\'Astrologie (Année chinoise, Signe du ciel).'
                     }
                 </p>
                 <div style={{ 
@@ -893,17 +855,7 @@ export default function Equation() {
                                 (id) => setSelectedEarthYears(selectedEarthYears.filter(x => x !== id))
                             )}
 
-                            {/* 4. Earth Month Box */}
-                            {renderFilterBox(
-                                t('Earth Month'),
-                                'earthMonth',
-                                selectedEarthMonths,
-                                earthMonthOptions,
-                                () => setSelectedEarthMonths([]),
-                                (id) => setSelectedEarthMonths(selectedEarthMonths.filter(x => x !== id))
-                            )}
-
-                            {/* 5. Sky Sign Box */}
+                            {/* 4. Sky Sign Box */}
                             {renderFilterBox(
                                 t('Sky Sign'),
                                 'skySign',
@@ -1219,20 +1171,6 @@ export default function Equation() {
                                     }}>
                                         <EarthSignEmoji sign={res.earthSign} size={18} />
                                         <span style={{ fontWeight: 600, fontSize: '0.82rem', color: 'var(--text-main)' }}>{t(res.earthSign.name)} ({t('Earth Year')})</span>
-                                    </div>
-                                    <div style={{ 
-                                        display: 'flex', 
-                                        alignItems: 'center', 
-                                        gap: '8px', 
-                                        background: 'var(--bg-secondary)', 
-                                        padding: '4px 10px', 
-                                        borderRadius: 'var(--radius-full)', 
-                                        width: '100%',
-                                        justifyContent: 'center',
-                                        border: '1px solid var(--border-color)'
-                                    }}>
-                                        <EarthSignEmoji sign={res.earthMonthSign} size={18} />
-                                        <span style={{ fontWeight: 600, fontSize: '0.82rem', color: 'var(--text-main)' }}>{t(res.earthMonthSign.name)} ({t('Earth Month')})</span>
                                     </div>
                                     <div style={{ 
                                         display: 'flex', 
