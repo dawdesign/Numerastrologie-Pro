@@ -1,6 +1,6 @@
 import { Lock } from 'lucide-react';
 import LockedBox from '../components/LockedBox';
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { calculateLifePath, reduceNumber, MASTER_NUMBERS, calculatePersonalCycles, calculateLuckyNumber, calculateUniversalCycles, reduceCycle, calculateAge, isLuckyDateMatch, getDayOfYear } from '../engine/numerology';
 import { getEarthSign, getLunarYear, getWesternSign, WESTERN_SIGNS, getEarthMonthSign, EARTH_SIGNS, checkEarthSignCompatibility } from '../engine/astrology';
@@ -56,12 +56,21 @@ export default function Calculator() {
         return stored ? stored : String(today.getFullYear());
     });
 
+    interface LatestProfile {
+        name: string;
+        day: string;
+        month: string;
+        year: string;
+        isExactDateUnknown?: boolean;
+        unknownDateEarthSign?: string;
+        endDate?: { year: number, month: number, day: number } | null;
+    }
+
     // Main Search state
     const [query, setQuery] = useState(() => localStorage.getItem('profileQuery') || '');
     const [results, setResults] = useState<WikiSearchResult[]>([]);
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
-    const [selectedEntityName, setSelectedEntityName] = useState(() => localStorage.getItem('profileName') || '');
     const [endDate, setEndDate] = useState<{ year: number, month: number, day: number } | null>(() => {
         const stored = localStorage.getItem('profileEndDate');
         return stored ? JSON.parse(stored) : null;
@@ -73,6 +82,119 @@ export default function Calculator() {
     const [unknownDateEarthSign, setUnknownDateEarthSign] = useState<string>(() => {
         return localStorage.getItem('profileUnknownDateEarthSign') || '';
     });
+
+    const [latestProfile, setLatestProfile] = useState<LatestProfile | null>(() => {
+        try {
+            const stored = localStorage.getItem('latestSearchedProfile');
+            if (stored) return JSON.parse(stored);
+            const storedName = localStorage.getItem('profileName');
+            const storedDay = localStorage.getItem('profileDay');
+            const storedMonth = localStorage.getItem('profileMonth');
+            const storedYear = localStorage.getItem('profileYear');
+            if (storedName && storedName !== 'Today' && storedName !== "Aujourd'hui" && storedDay && storedMonth && storedYear) {
+                return {
+                    name: storedName,
+                    day: storedDay,
+                    month: storedMonth,
+                    year: storedYear,
+                    isExactDateUnknown: localStorage.getItem('profileIsExactDateUnknown') === 'true',
+                    unknownDateEarthSign: localStorage.getItem('profileUnknownDateEarthSign') || '',
+                    endDate: localStorage.getItem('profileEndDate') ? JSON.parse(localStorage.getItem('profileEndDate')!) : null
+                };
+            }
+        } catch {}
+        return null;
+    });
+
+    const [isTodaySelected, setIsTodaySelected] = useState<boolean>(() => {
+        return localStorage.getItem('profileIsToday') === 'true';
+    });
+
+    const isDateMatchingLatest = useMemo(() => {
+        if (!latestProfile) return false;
+
+        if (latestProfile.isExactDateUnknown) {
+            if (!isExactDateUnknown) return false;
+            const curY = parseInt(String(year), 10);
+            const tgtY = parseInt(String(latestProfile.year), 10);
+            return !isNaN(curY) && !isNaN(tgtY) && curY === tgtY;
+        }
+
+        const curD = parseInt(String(day), 10);
+        const curM = parseInt(String(month), 10);
+        const curY = parseInt(String(year), 10);
+
+        const tgtD = parseInt(String(latestProfile.day), 10);
+        const tgtM = parseInt(String(latestProfile.month), 10);
+        const tgtY = parseInt(String(latestProfile.year), 10);
+
+        return (
+            !isNaN(curD) && !isNaN(curM) && !isNaN(curY) &&
+            !isNaN(tgtD) && !isNaN(tgtM) && !isNaN(tgtY) &&
+            curD === tgtD &&
+            curM === tgtM &&
+            curY === tgtY
+        );
+    }, [latestProfile, day, month, year, isExactDateUnknown]);
+
+    const isMatchingToday = useMemo(() => {
+        const curD = parseInt(String(day), 10);
+        const curM = parseInt(String(month), 10);
+        const curY = parseInt(String(year), 10);
+        const now = new Date();
+        return curD === now.getDate() && curM === (now.getMonth() + 1) && curY === now.getFullYear();
+    }, [day, month, year]);
+
+    const activeProfileName = useMemo(() => {
+        if (isDateMatchingLatest && latestProfile) {
+            return latestProfile.name;
+        }
+        if (isTodaySelected && isMatchingToday) {
+            return t('Today');
+        }
+        return '';
+    }, [isDateMatchingLatest, latestProfile, isTodaySelected, isMatchingToday, t]);
+
+    const selectedEntityName = activeProfileName;
+
+    const formattedTrueDate = useMemo(() => {
+        const d = parseInt(String(day), 10);
+        const m = parseInt(String(month), 10);
+        const y = parseInt(String(year), 10);
+        if (isNaN(d) || isNaN(m) || isNaN(y)) return '';
+
+        try {
+            const dt = new Date(2000, m - 1, d);
+            dt.setFullYear(y);
+            const str = dt.toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+            if (str && str !== 'Invalid Date') {
+                return str;
+            }
+        } catch {}
+        return `${String(d).padStart(2, '0')}/${String(m).padStart(2, '0')}/${y}`;
+    }, [day, month, year, language]);
+
+    useEffect(() => {
+        if (!isDateMatchingLatest && latestProfile && query === latestProfile.name) {
+            setQuery('');
+        } else if (isDateMatchingLatest && latestProfile && query === '') {
+            setQuery(latestProfile.name);
+        }
+    }, [isDateMatchingLatest, latestProfile]);
+
+    useEffect(() => {
+        if (isDateMatchingLatest && latestProfile?.endDate && !endDate) {
+            setEndDate(latestProfile.endDate);
+        }
+    }, [isDateMatchingLatest, latestProfile]);
+
+    useEffect(() => {
+        localStorage.setItem('profileIsToday', isTodaySelected.toString());
+    }, [isTodaySelected]);
 
     const searchRef = useRef<HTMLDivElement>(null);
     const [showResults, setShowResults] = useState(false);
@@ -407,7 +529,21 @@ export default function Calculator() {
 
             if (localClub) {
                 setErrorMsg('');
-                setSelectedEntityName(localClub.name);
+                const dayVal = localClub.isExactDateUnknown ? '' : (localClub.day ?? 1).toString().padStart(2, '0');
+                const monthVal = localClub.isExactDateUnknown ? '' : (localClub.month ?? 1).toString().padStart(2, '0');
+                const yearVal = localClub.year ? localClub.year.toString() : '';
+                const profileData: LatestProfile = {
+                    name: localClub.name,
+                    day: dayVal,
+                    month: monthVal,
+                    year: yearVal,
+                    isExactDateUnknown: Boolean(localClub.isExactDateUnknown),
+                    unknownDateEarthSign: localClub.earthSign || '',
+                    endDate: null
+                };
+                setLatestProfile(profileData);
+                localStorage.setItem('latestSearchedProfile', JSON.stringify(profileData));
+                setIsTodaySelected(false);
                 setQuery(localClub.name);
                 setShowResults(false);
                 setShowSearchHistory(false);
@@ -418,14 +554,14 @@ export default function Calculator() {
                 if (localClub.isExactDateUnknown) {
                     setIsExactDateUnknown(true);
                     setUnknownDateEarthSign(localClub.earthSign);
-                    setYear(localClub.year ? localClub.year.toString() : '');
+                    setYear(yearVal);
                     setMonth('');
                     setDay('');
                 } else {
                     setIsExactDateUnknown(false);
-                    setYear(localClub.year ? localClub.year.toString() : '');
-                    setMonth((localClub.month ?? 1).toString().padStart(2, '0'));
-                    setDay((localClub.day ?? 1).toString().padStart(2, '0'));
+                    setYear(yearVal);
+                    setMonth(monthVal);
+                    setDay(dayVal);
                 }
                 return;
             }
@@ -438,7 +574,21 @@ export default function Calculator() {
 
             if (localCountry) {
                 setErrorMsg('');
-                setSelectedEntityName(localCountry.name);
+                const dayVal = localCountry.isExactDateUnknown ? '' : (localCountry.day ?? 1).toString().padStart(2, '0');
+                const monthVal = localCountry.isExactDateUnknown ? '' : (localCountry.month ?? 1).toString().padStart(2, '0');
+                const yearVal = localCountry.year ? localCountry.year.toString() : '';
+                const profileData: LatestProfile = {
+                    name: localCountry.name,
+                    day: dayVal,
+                    month: monthVal,
+                    year: yearVal,
+                    isExactDateUnknown: Boolean(localCountry.isExactDateUnknown),
+                    unknownDateEarthSign: localCountry.earthSign || '',
+                    endDate: null
+                };
+                setLatestProfile(profileData);
+                localStorage.setItem('latestSearchedProfile', JSON.stringify(profileData));
+                setIsTodaySelected(false);
                 setQuery(localCountry.name);
                 setShowResults(false);
                 setShowSearchHistory(false);
@@ -449,14 +599,14 @@ export default function Calculator() {
                 if (localCountry.isExactDateUnknown) {
                     setIsExactDateUnknown(true);
                     setUnknownDateEarthSign(localCountry.earthSign);
-                    setYear(localCountry.year ? localCountry.year.toString() : '');
+                    setYear(yearVal);
                     setMonth('');
                     setDay('');
                 } else {
                     setIsExactDateUnknown(false);
-                    setYear(localCountry.year ? localCountry.year.toString() : '');
-                    setMonth((localCountry.month ?? 1).toString().padStart(2, '0'));
-                    setDay((localCountry.day ?? 1).toString().padStart(2, '0'));
+                    setYear(yearVal);
+                    setMonth(monthVal);
+                    setDay(dayVal);
                 }
                 return;
             }
@@ -465,11 +615,25 @@ export default function Calculator() {
 
             if (foundDate) {
                 const { year, month, day } = foundDate;
-                setYear(year.toString());
-                setMonth(month.toString().padStart(2, '0'));
-                setDay(day.toString().padStart(2, '0'));
+                const dayVal = day.toString().padStart(2, '0');
+                const monthVal = month.toString().padStart(2, '0');
+                const yearVal = year.toString();
+                const profileData: LatestProfile = {
+                    name: title,
+                    day: dayVal,
+                    month: monthVal,
+                    year: yearVal,
+                    isExactDateUnknown: false,
+                    unknownDateEarthSign: '',
+                    endDate: foundEndDate
+                };
+                setLatestProfile(profileData);
+                localStorage.setItem('latestSearchedProfile', JSON.stringify(profileData));
+                setIsTodaySelected(false);
+                setYear(yearVal);
+                setMonth(monthVal);
+                setDay(dayVal);
                 setEndDate(foundEndDate);
-                setSelectedEntityName(title);
                 setIsExactDateUnknown(false);
                 setErrorMsg('');
                 setQuery(title);
@@ -789,7 +953,7 @@ export default function Calculator() {
                                 setMonth((today.getMonth() + 1).toString().padStart(2, '0'));
                                 setDay(today.getDate().toString().padStart(2, '0'));
                                 setYear(today.getFullYear().toString());
-                                setSelectedEntityName(t('Today'));
+                                setIsTodaySelected(true);
                                 setEndDate(null);
                                 setQuery('');
                                 setIsExactDateUnknown(false);
@@ -841,7 +1005,9 @@ export default function Calculator() {
                         </button>
                     </div>
 
-                    {selectedEntityName && <h2 style={{ fontSize: 'clamp(1rem, 3.5vw, 1.2rem)', marginBottom: 'var(--spacing-sm)', color: 'var(--text-secondary)', padding: '0 44px', textAlign: 'center', wordBreak: 'break-word' }}>{selectedEntityName}</h2>}
+                    <h2 style={{ fontSize: 'clamp(1rem, 3.5vw, 1.2rem)', marginBottom: 'var(--spacing-sm)', color: 'var(--text-secondary)', padding: '0 44px', textAlign: 'center', wordBreak: 'break-word' }}>
+                        {selectedEntityName || formattedTrueDate}
+                    </h2>
                     <div style={{ display: 'flex', gap: 'var(--spacing-md)', alignItems: 'center', padding: '0 44px', maxWidth: '100%' }}>
                         <div style={{ position: 'relative', maxWidth: '100%' }}>
                             <div style={{
@@ -874,7 +1040,7 @@ export default function Calculator() {
                 </div>
             )}
 
-            {isExactDateUnknownEffective && selectedEntityName && (
+            {isExactDateUnknownEffective && (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', width: '100%', maxWidth: '700px', marginBottom: 'var(--spacing-md)' }}>
                     <div style={{ position: 'absolute', top: 0, left: 0 }}>
                         <button
@@ -883,7 +1049,7 @@ export default function Calculator() {
                                 setMonth((today.getMonth() + 1).toString().padStart(2, '0'));
                                 setDay(today.getDate().toString().padStart(2, '0'));
                                 setYear(today.getFullYear().toString());
-                                setSelectedEntityName(t('Today'));
+                                setIsTodaySelected(true);
                                 setEndDate(null);
                                 setQuery('');
                                 setIsExactDateUnknown(false);
@@ -910,7 +1076,7 @@ export default function Calculator() {
                         </button>
                     </div>
 
-                    <h2 style={{ fontSize: 'clamp(1.15rem, 4vw, 1.5rem)', fontWeight: 700, margin: 'var(--spacing-sm) 0 0 0', color: 'var(--text-main)', padding: '0 44px', textAlign: 'center', wordBreak: 'break-word' }}>{selectedEntityName}</h2>
+                    <h2 style={{ fontSize: 'clamp(1.15rem, 4vw, 1.5rem)', fontWeight: 700, margin: 'var(--spacing-sm) 0 0 0', color: 'var(--text-main)', padding: '0 44px', textAlign: 'center', wordBreak: 'break-word' }}>{selectedEntityName || year}</h2>
                 </div>
             )}
 

@@ -126,6 +126,27 @@ export default function Calendar() {
 
         if (!pm || !pd || !py) return null;
 
+        // Check if date corresponds to the latest profile from search
+        try {
+            const stored = localStorage.getItem('latestSearchedProfile');
+            if (stored) {
+                const latest = JSON.parse(stored);
+                const targetD = parseInt(String(latest.day), 10);
+                const targetM = parseInt(String(latest.month), 10);
+                const targetY = parseInt(String(latest.year), 10);
+                const isMatch = latest.isExactDateUnknown
+                    ? (py === targetY)
+                    : (pd === targetD && pm === targetM && py === targetY);
+                if (isMatch) {
+                    if (!name && latest.name) {
+                        name = latest.name;
+                    }
+                } else {
+                    name = null;
+                }
+            }
+        } catch {}
+
         const { lifepath, unreduced } = calculateLifePath(pm, pd, py);
         const earthSign = getEarthSign(py, pm, pd);
         const luckyNumber = calculateLuckyNumber(pm, pd, py);
