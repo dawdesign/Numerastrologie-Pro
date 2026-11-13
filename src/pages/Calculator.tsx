@@ -1369,7 +1369,7 @@ export default function Calculator() {
                             <div className="card" style={{
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 padding: 'clamp(12px, 3vw, var(--spacing-xl)) clamp(6px, 1.5vw, var(--spacing-lg))',
-                                border: '1px solid var(--border-color)', minHeight: 'clamp(175px, 25vw, 210px)',
+                                border: '1px solid var(--border-color)',
                                 height: '100%', boxSizing: 'border-box'
                             }}>
                                 <LockedBox size={38} />
@@ -1386,7 +1386,6 @@ export default function Calculator() {
                                 padding: 'clamp(12px, 3vw, var(--spacing-xl)) clamp(6px, 1.5vw, var(--spacing-lg))',
                                 textAlign: 'center',
                                 border: `2px dashed var(--accent-gold)`,
-                                minHeight: 'clamp(175px, 25vw, 210px)',
                                 height: '100%', boxSizing: 'border-box'
                             }}>
                                 <div style={{ fontSize: 'clamp(0.5rem, 2vw, 0.8rem)', textTransform: 'uppercase', color: 'var(--text-secondary)', fontWeight: 600, letterSpacing: '0.05em', marginBottom: 'var(--spacing-sm)', whiteSpace: 'nowrap' }}>
@@ -1412,7 +1411,7 @@ export default function Calculator() {
                             <div className="card" style={{
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 padding: 'clamp(12px, 3vw, var(--spacing-xl)) clamp(6px, 1.5vw, var(--spacing-lg))',
-                                border: '1px solid var(--border-color)', minHeight: 'clamp(175px, 25vw, 210px)',
+                                border: '1px solid var(--border-color)',
                                 height: '100%', boxSizing: 'border-box'
                             }}>
                                 <LockedBox size={38} />
