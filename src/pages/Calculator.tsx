@@ -3,7 +3,7 @@ import LockedBox from '../components/LockedBox';
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { calculateLifePath, reduceNumber, MASTER_NUMBERS, calculatePersonalCycles, calculateLuckyNumber, calculateUniversalCycles, reduceCycle, calculateAge, isLuckyDateMatch, getDayOfYear } from '../engine/numerology';
-import { getEarthSign, getLunarYear, getWesternSign, WESTERN_SIGNS, getEarthMonthSign, EARTH_SIGNS, checkEarthSignCompatibility } from '../engine/astrology';
+import { getEarthSign, getLunarYear, getWesternSign, WESTERN_SIGNS, getEarthMonthSign, EARTH_SIGNS, checkEarthSignCompatibility, checkWesternSignCompatibility } from '../engine/astrology';
 import { COUNTRIES_FOUNDING_DATA } from '../data/countriesData';
 import { CLUBS_FOUNDING_DATA } from '../data/clubsData';
 import { WIKI_EARTH_SIGNS } from '../data/wikiData';
@@ -730,6 +730,8 @@ export default function Calculator() {
 
             let yearSignVsTodayColor = '';
             let yearSignVsTodayCompat = '';
+            let skySignVsTodayColor = '';
+            let skySignVsTodayCompat = '';
 
             const isToday = y === now.getFullYear() && m === (now.getMonth() + 1) && d === now.getDate();
             const earthMonthSignObj = getEarthMonthSign(m, d);
@@ -744,10 +746,16 @@ export default function Calculator() {
                         yearSignVsTodayColor = getCompatColor(label);
                         yearSignVsTodayCompat = label;
                     }
+
+                    const skyCompat = checkWesternSignCompatibility(skySign.name, todaySkySign.name);
+                    if (skyCompat === 'Same' || skyCompat === 'Trine') {
+                        skySignVsTodayColor = getCompatColor(skyCompat);
+                        skySignVsTodayCompat = skyCompat;
+                    }
                 }
             }
 
-            const isSameSkySign = isSameSkySignAsToday;
+            const isSameSkySign = isSameSkySignAsToday || (skySignVsTodayCompat === 'Same' || skySignVsTodayCompat === 'Trine');
 
             let endCycles = null;
             if (endDate) {
@@ -793,6 +801,8 @@ export default function Calculator() {
                 skySignIndex,
                 isSameSkySign,
                 isSameSkySignAsToday,
+                skySignVsTodayColor,
+                skySignVsTodayCompat,
                 earthSignIndex,
                 dayOfYear,
                 weekOfYear,
@@ -1248,6 +1258,8 @@ export default function Calculator() {
                             justifyContent: 'center',
                             padding: 'clamp(12px, 3vw, var(--spacing-xl)) clamp(6px, 1.5vw, var(--spacing-lg))',
                             textAlign: 'center',
+                            border: (showCompatOutlines && reading.skySignVsTodayColor) ? `2px solid ${reading.skySignVsTodayColor}` : undefined,
+                            transition: 'border-color 0.3s ease',
                             height: '100%'
                         }}>
                             <div style={{ fontSize: 'clamp(2rem, 6.5vw, 3rem)', lineHeight: 1, filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))', marginBottom: 'var(--spacing-sm)' }}>
@@ -1260,6 +1272,15 @@ export default function Calculator() {
                                 {getOrdinal(reading.skySignIndex, language)} {t('sign')}
                             </div>
                         </div>
+                        {showCompatOutlines && reading.skySignVsTodayColor && (
+                            <div style={{
+                                position: 'absolute', top: '0', left: '50%', transform: 'translate(-50%, -50%)',
+                                background: reading.skySignVsTodayColor, color: '#fff', fontSize: 'clamp(0.5rem, 2vw, 0.7rem)', padding: '2px 6px', borderRadius: '12px', fontWeight: 600,
+                                whiteSpace: 'nowrap', zIndex: 10
+                            }}>
+                                {t(reading.skySignVsTodayCompat)}
+                            </div>
+                        )}
                     </div>
 
                     {/* Secondary Energy Card */}
@@ -1344,46 +1365,58 @@ export default function Calculator() {
                     {/* BOTTOM 3 CARDS ROW */}
                     <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'clamp(8px, 2vw, var(--spacing-md))', marginTop: 'var(--spacing-xs)', width: '100%', maxWidth: '700px', margin: '0 auto' }}>
                         {/* Earth Month Card - Locked */}
-                        <div className="card" style={{
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            padding: 'clamp(8px, 2vw, var(--spacing-xl)) clamp(4px, 1vw, var(--spacing-lg))',
-                            border: '1px solid var(--border-color)', minHeight: '130px'
-                        }}>
-                            <LockedBox size={32} />
+                        <div style={{ position: 'relative', minWidth: 0 }}>
+                            <div className="card" style={{
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                padding: 'clamp(12px, 3vw, var(--spacing-xl)) clamp(6px, 1.5vw, var(--spacing-lg))',
+                                border: '1px solid var(--border-color)', minHeight: 'clamp(175px, 25vw, 210px)',
+                                height: '100%', boxSizing: 'border-box'
+                            }}>
+                                <LockedBox size={38} />
+                            </div>
                         </div>
 
                         {/* Lucky Number Card */}
-                        <div className="card" style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            padding: 'clamp(8px, 2vw, var(--spacing-xl)) clamp(4px, 1vw, var(--spacing-lg))',
-                            textAlign: 'center',
-                            border: `2px dashed var(--accent-gold)`,
-                            minHeight: '130px'
-                        }}>
-                            <div style={{ fontSize: 'clamp(0.5rem, 2vw, 0.8rem)', textTransform: 'uppercase', color: 'var(--text-secondary)', fontWeight: 600, letterSpacing: '0.05em', marginBottom: 'var(--spacing-sm)', whiteSpace: 'nowrap' }}>
-                                {t('Lucky #')}
-                            </div>
-                            <div style={{ fontSize: 'clamp(1.2rem, 5vw, 2.8rem)', fontWeight: 800, color: 'var(--accent-gold)', lineHeight: 1 }}>
-                                {reading.luckyNumber.base !== reading.luckyNumber.flipped ? (
-                                    <>
-                                        <span>{reading.luckyNumber.base}</span>
-                                        <span style={{ color: 'var(--text-tertiary)', margin: '0 3px', fontWeight: 300 }}>/</span>
-                                        <span>{reading.luckyNumber.flipped}</span>
-                                    </>
-                                ) : reading.luckyNumber.base}
+                        <div style={{ position: 'relative', minWidth: 0 }}>
+                            <div className="card" style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: 'clamp(12px, 3vw, var(--spacing-xl)) clamp(6px, 1.5vw, var(--spacing-lg))',
+                                textAlign: 'center',
+                                border: `2px dashed var(--accent-gold)`,
+                                minHeight: 'clamp(175px, 25vw, 210px)',
+                                height: '100%', boxSizing: 'border-box'
+                            }}>
+                                <div style={{ fontSize: 'clamp(0.5rem, 2vw, 0.8rem)', textTransform: 'uppercase', color: 'var(--text-secondary)', fontWeight: 600, letterSpacing: '0.05em', marginBottom: 'var(--spacing-sm)', whiteSpace: 'nowrap' }}>
+                                    {t('Lucky #')}
+                                </div>
+                                <div style={{ fontSize: 'clamp(1.2rem, 5vw, 2.8rem)', fontWeight: 800, color: 'var(--accent-gold)', lineHeight: 1 }}>
+                                    {reading.luckyNumber.base !== reading.luckyNumber.flipped ? (
+                                        <>
+                                            <span>{reading.luckyNumber.base}</span>
+                                            <span style={{ fontSize: 'clamp(0.8rem, 3vw, 1.2rem)', color: 'var(--accent-gold)', opacity: 0.6, margin: '0 2px' }}>/</span>
+                                            <span>{reading.luckyNumber.flipped}</span>
+                                        </>
+                                    ) : reading.luckyNumber.base}
+                                </div>
+                                <div style={{ fontStyle: 'italic', color: 'var(--text-tertiary)', fontSize: 'clamp(0.6rem, 2vw, 0.9rem)', marginTop: 'var(--spacing-sm)' }}>
+                                    {t('vibration')}
+                                </div>
                             </div>
                         </div>
 
                         {/* Pinnacle Card - Locked */}
-                        <div className="card" style={{
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            padding: 'clamp(8px, 2vw, var(--spacing-xl)) clamp(4px, 1vw, var(--spacing-lg))',
-                            border: '1px solid var(--border-color)', minHeight: '130px'
-                        }}>
-                            <LockedBox size={32} />
+                        <div style={{ position: 'relative', minWidth: 0 }}>
+                            <div className="card" style={{
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                padding: 'clamp(12px, 3vw, var(--spacing-xl)) clamp(6px, 1.5vw, var(--spacing-lg))',
+                                border: '1px solid var(--border-color)', minHeight: 'clamp(175px, 25vw, 210px)',
+                                height: '100%', boxSizing: 'border-box'
+                            }}>
+                                <LockedBox size={38} />
+                            </div>
                         </div>
                     </div>
 

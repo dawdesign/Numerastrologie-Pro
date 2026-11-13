@@ -2,7 +2,7 @@ import LockedBox from '../components/LockedBox';
 import { useState, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { calculateLifePath, reduceNumber, MASTER_NUMBERS, calculateLuckyNumber, calculatePersonalCycles, reduceCycle, calculateAge, isLuckyDateMatch, getDayOfYear } from '../engine/numerology';
-import { getEarthSign, getWesternSign, getEarthMonthSign, checkEarthSignCompatibility } from '../engine/astrology';
+import { getEarthSign, getWesternSign, getEarthMonthSign, checkEarthSignCompatibility, checkWesternSignCompatibility } from '../engine/astrology';
 import { EarthSignEmoji } from '../components/ZodiacEmoji';
 import { useSettings } from '../context/SettingsContext';
 import { getMoonPhase } from '../engine/moonPhase';
@@ -625,9 +625,10 @@ export default function Calendar() {
                             if (emCompat === 'Enemy') detailEarthColor = 'var(--accent-red)';
                             else if (emCompat === 'Friend' || emCompat === 'Soulmate' || emCompat === 'Same') detailEarthColor = 'var(--accent-dark-green)';
 
-                            // Sky Sign specific match
+                            // Sky Sign specific match: outlined green if same element (Trine) or same sign
                             const exportedSkySign = exportedProfile.skySign || getWesternSign(exportedProfile.month, exportedProfile.day);
-                            if (dayReading.skySign.name === exportedSkySign.name) {
+                            const skyCompat = checkWesternSignCompatibility(dayReading.skySign.name, exportedSkySign.name);
+                            if (skyCompat === 'Same' || skyCompat === 'Trine') {
                                 detailSkyColor = 'var(--accent-dark-green)';
                             }
                         }

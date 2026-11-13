@@ -307,3 +307,36 @@ export function checkEarthSignCompatibility(sign1: ZodiacSign, sign2: ZodiacSign
 
     return 'Neutral';
 }
+
+export type WesternElement = 'Fire' | 'Earth' | 'Air' | 'Water';
+
+export const WESTERN_SIGN_ELEMENTS: Record<string, WesternElement> = {
+    'Aries': 'Fire',
+    'Leo': 'Fire',
+    'Sagittarius': 'Fire',
+    'Taurus': 'Earth',
+    'Virgo': 'Earth',
+    'Capricorn': 'Earth',
+    'Gemini': 'Air',
+    'Libra': 'Air',
+    'Aquarius': 'Air',
+    'Cancer': 'Water',
+    'Scorpio': 'Water',
+    'Pisces': 'Water'
+};
+
+export function getWesternSignElement(signName: string): WesternElement | undefined {
+    return WESTERN_SIGN_ELEMENTS[signName];
+}
+
+export type WesternCompatibility = 'Same' | 'Trine' | 'Neutral';
+
+export function checkWesternSignCompatibility(sign1Name: string, sign2Name: string): WesternCompatibility {
+    if (!sign1Name || !sign2Name) return 'Neutral';
+    if (sign1Name === sign2Name) return 'Same';
+    const elem1 = WESTERN_SIGN_ELEMENTS[sign1Name];
+    const elem2 = WESTERN_SIGN_ELEMENTS[sign2Name];
+    if (elem1 && elem2 && elem1 === elem2) return 'Trine';
+    return 'Neutral';
+}
+
