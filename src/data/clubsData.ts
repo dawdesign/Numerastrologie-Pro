@@ -124,7 +124,7 @@ export const CLUBS_FOUNDING_DATA: ClubFoundingData[] = [
         league: "Ligue 1",
         country: "France",
         origins: "fusion des différentes sociétés sportives de la Principauté",
-        aliases: ["Monaco","AS Monaco","ASM"],
+        aliases: ["AS Monaco","ASM"],
     },
     {
         name: "Montpellier HSC",
