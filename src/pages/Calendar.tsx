@@ -1,5 +1,5 @@
 import LockedBox from '../components/LockedBox';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { calculateLifePath, reduceNumber, MASTER_NUMBERS, calculateLuckyNumber, calculatePersonalCycles, reduceCycle, calculateAge, isLuckyDateMatch, getDayOfYear } from '../engine/numerology';
 import { getEarthSign, getWesternSign, getEarthMonthSign, checkEarthSignCompatibility, checkWesternSignCompatibility } from '../engine/astrology';
@@ -37,6 +37,50 @@ const getCycleColor = (cycle: number | string, profileLp?: number | string) => {
     return 'inherit';
 };
 
+const CALENDAR_STATE_KEY = 'matrixCalendarState';
+
+interface CalendarViewState {
+    viewMode: 'Days' | 'Months' | 'Years';
+    currentYear: number;
+    currentMonth: number;
+    selectedDay: number;
+    selectedMonth: number;
+    selectedYear: number;
+}
+
+const loadInitialCalendarState = (): CalendarViewState => {
+    const now = new Date();
+    const fallback: CalendarViewState = {
+        viewMode: 'Days',
+        currentYear: now.getFullYear(),
+        currentMonth: now.getMonth() + 1,
+        selectedDay: now.getDate(),
+        selectedMonth: now.getMonth() + 1,
+        selectedYear: now.getFullYear(),
+    };
+    try {
+        const raw = sessionStorage.getItem(CALENDAR_STATE_KEY);
+        if (!raw) return fallback;
+        const parsed = JSON.parse(raw);
+        if (
+            (parsed.viewMode === 'Days' || parsed.viewMode === 'Months' || parsed.viewMode === 'Years') &&
+            typeof parsed.currentYear === 'number' &&
+            typeof parsed.currentMonth === 'number' && parsed.currentMonth >= 1 && parsed.currentMonth <= 12 &&
+            typeof parsed.selectedDay === 'number' && parsed.selectedDay >= 1 && parsed.selectedDay <= 31 &&
+            typeof parsed.selectedMonth === 'number' && parsed.selectedMonth >= 1 && parsed.selectedMonth <= 12 &&
+            typeof parsed.selectedYear === 'number'
+        ) {
+            return parsed;
+        }
+    } catch {}
+    return fallback;
+};
+
+const clampDay = (day: number, year: number, month: number) => {
+    const maxDays = new Date(year, month, 0).getDate();
+    return Math.min(day, maxDays);
+};
+
 export default function Calendar() {
     const navigate = useNavigate();
     const { t, language } = useSettings();
@@ -46,12 +90,22 @@ export default function Calendar() {
     const profileYear = searchParams.get('py');
     const profileName = searchParams.get('name');
     const today = new Date();
-    const [viewMode, setViewMode] = useState<'Days' | 'Months' | 'Years'>('Days');
-    const [currentYear, setCurrentYear] = useState(today.getFullYear());
-    const [currentMonth, setCurrentMonth] = useState(today.getMonth() + 1); // 1-12
-    const [selectedDay, setSelectedDay] = useState(today.getDate());
-    const [selectedMonth, setSelectedMonth] = useState(today.getMonth() + 1);
-    const [selectedYear, setSelectedYear] = useState(today.getFullYear());
+    const initialState = useMemo(() => loadInitialCalendarState(), []);
+    const [viewMode, setViewMode] = useState<'Days' | 'Months' | 'Years'>(initialState.viewMode);
+    const [currentYear, setCurrentYear] = useState(initialState.currentYear);
+    const [currentMonth, setCurrentMonth] = useState(initialState.currentMonth); // 1-12
+    const [selectedDay, setSelectedDay] = useState(initialState.selectedDay);
+    const [selectedMonth, setSelectedMonth] = useState(initialState.selectedMonth);
+    const [selectedYear, setSelectedYear] = useState(initialState.selectedYear);
+
+    useEffect(() => {
+        try {
+            sessionStorage.setItem(
+                CALENDAR_STATE_KEY,
+                JSON.stringify({ viewMode, currentYear, currentMonth, selectedDay, selectedMonth, selectedYear })
+            );
+        } catch {}
+    }, [viewMode, currentYear, currentMonth, selectedDay, selectedMonth, selectedYear]);
 
 
     // Generate matrix for the current month
@@ -75,14 +129,18 @@ export default function Calendar() {
 
     const nextView = () => {
         if (viewMode === 'Days') {
-            if (currentMonth === 12) {
-                setCurrentMonth(1);
-                setCurrentYear(y => y + 1);
-            } else {
-                setCurrentMonth(m => m + 1);
-            }
+            const newMonth = currentMonth === 12 ? 1 : currentMonth + 1;
+            const newYear = currentMonth === 12 ? currentYear + 1 : currentYear;
+            setCurrentMonth(newMonth);
+            setCurrentYear(newYear);
+            setSelectedMonth(newMonth);
+            setSelectedYear(newYear);
+            setSelectedDay(d => clampDay(d, newYear, newMonth));
         } else if (viewMode === 'Months') {
-            setCurrentYear(y => y + 1);
+            const newYear = currentYear + 1;
+            setCurrentYear(newYear);
+            setSelectedYear(newYear);
+            setSelectedDay(d => clampDay(d, newYear, selectedMonth));
         } else if (viewMode === 'Years') {
             setCurrentYear(y => y + 12);
         }
@@ -90,14 +148,18 @@ export default function Calendar() {
 
     const prevView = () => {
         if (viewMode === 'Days') {
-            if (currentMonth === 1) {
-                setCurrentMonth(12);
-                setCurrentYear(y => y - 1);
-            } else {
-                setCurrentMonth(m => m - 1);
-            }
+            const newMonth = currentMonth === 1 ? 12 : currentMonth - 1;
+            const newYear = currentMonth === 1 ? currentYear - 1 : currentYear;
+            setCurrentMonth(newMonth);
+            setCurrentYear(newYear);
+            setSelectedMonth(newMonth);
+            setSelectedYear(newYear);
+            setSelectedDay(d => clampDay(d, newYear, newMonth));
         } else if (viewMode === 'Months') {
-            setCurrentYear(y => y - 1);
+            const newYear = currentYear - 1;
+            setCurrentYear(newYear);
+            setSelectedYear(newYear);
+            setSelectedDay(d => clampDay(d, newYear, selectedMonth));
         } else if (viewMode === 'Years') {
             setCurrentYear(y => y - 12);
         }
@@ -287,7 +349,7 @@ export default function Calendar() {
                         <button className="btn btn-outline" style={{ padding: 'clamp(4px, 1vw, 6px) clamp(10px, 1.8vw, 14px)', fontSize: 'clamp(0.72rem, 1.8vw, 0.85rem)' }} onClick={prevView}>&larr; {t('Prev')}</button>
                         <div style={{ display: 'flex', gap: 'clamp(4px, 1vw, var(--spacing-sm))', alignItems: 'center' }}>
                             {viewMode === 'Days' && (
-                                <select className="input-field" style={{ padding: 'clamp(4px, 1vw, 6px)', fontSize: 'clamp(0.72rem, 1.8vw, 0.85rem)', maxWidth: 'clamp(80px, 25vw, 150px)' }} value={currentMonth} onChange={e => { setCurrentMonth(parseInt(e.target.value)); setSelectedMonth(parseInt(e.target.value)); }}>
+                                <select className="input-field" style={{ padding: 'clamp(4px, 1vw, 6px)', fontSize: 'clamp(0.72rem, 1.8vw, 0.85rem)', maxWidth: 'clamp(80px, 25vw, 150px)' }} value={currentMonth} onChange={e => { const m = parseInt(e.target.value, 10); setCurrentMonth(m); setSelectedMonth(m); setSelectedYear(currentYear); setSelectedDay(d => clampDay(d, currentYear, m)); }}>
                                     {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
                                         <option key={m} value={m}>{new Date(2000, m - 1, 1).toLocaleString(language === 'fr' ? 'fr-FR' : 'en-US', { month: 'short' })}</option>
                                     ))}
@@ -301,9 +363,10 @@ export default function Calendar() {
                                     value={currentYear}
                                     onFocus={(e) => e.target.select()}
                                     onChange={e => {
-                                        const val = parseInt(e.target.value) || 2024;
+                                        const val = parseInt(e.target.value, 10) || 2024;
                                         setCurrentYear(val);
                                         setSelectedYear(val);
+                                        setSelectedDay(d => clampDay(d, val, selectedMonth));
                                     }}
                                 />
                             )}
@@ -368,7 +431,11 @@ export default function Calendar() {
                                     return (
                                         <div
                                             key={day}
-                                            onClick={() => setSelectedDay(day)}
+                                            onClick={() => {
+                                                setSelectedDay(day);
+                                                setSelectedMonth(currentMonth);
+                                                setSelectedYear(currentYear);
+                                            }}
                                             className="matrix-day-cell"
                                             title={`${language === 'fr' ? dayMoon.nameFr : dayMoon.nameEn} (${Math.round(dayMoon.fraction * 100)}%)`}
                                             style={{
@@ -456,6 +523,8 @@ export default function Calendar() {
                                         onClick={() => {
                                             setSelectedMonth(m);
                                             setCurrentMonth(m);
+                                            setSelectedYear(currentYear);
+                                            setSelectedDay(d => clampDay(d, currentYear, m));
                                         }}
                                         className="matrix-month-cell"
                                         style={{
@@ -526,6 +595,7 @@ export default function Calendar() {
                                         key={y}
                                         onClick={() => {
                                             setSelectedYear(y);
+                                            setSelectedDay(d => clampDay(d, y, selectedMonth));
                                         }}
                                         className="matrix-year-cell"
                                         style={{

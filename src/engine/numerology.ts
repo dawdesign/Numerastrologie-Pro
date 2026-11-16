@@ -170,7 +170,8 @@ export function calculatePersonalCycles(birthMonth: number, birthDay: number, cu
     }
 
     // Do NOT split master numbers (e.g. 11, 22) into 1+1 or 2+2! Use the actual values.
-    const pmRaw = personalYear + reduceNumber(effectiveMonth);
+    // Use the unreduced personal year so sums like 28 + 5 = 33 or 17 + 5 = 22 preserve master numbers.
+    const pmRaw = personalYearResult.unreduced + reduceNumber(effectiveMonth);
     const personalMonth = reduceCycle(pmRaw);
 
     // 3. Personal Day = Personal Year + Month + Day
