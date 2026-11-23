@@ -858,6 +858,7 @@ export default function Calendar() {
                         const uMonth = reduceCycle(selectedMonth + reduceCycle(currentYear));
                         const monthName = new Date(currentYear, selectedMonth - 1, 1).toLocaleString(language === 'fr' ? 'fr-FR' : 'en-US', { month: 'long' });
                         const selectedMonthYearSign = getEarthSign(currentYear, selectedMonth, 15);
+                        const selectedMonthSkySign = getWesternSign(selectedMonth, 15);
                         let luckyReasons: React.ReactNode[] = [];
 
                         if (exportedProfile) {
@@ -910,7 +911,7 @@ export default function Calendar() {
                                     </div>
                                 </div>
 
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '10px', width: '100%', margin: '6px 0' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '8px', width: '100%', margin: '6px 0' }}>
                                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '10px 6px', minWidth: 0, overflow: 'hidden' }}>
                                         <div style={{ fontSize: '0.68rem', textTransform: 'uppercase', color: 'var(--text-secondary)', fontWeight: 600, minHeight: '2.4em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('Earth Year')}</div>
                                         <div style={{ padding: '4px', marginTop: '4px' }}>
@@ -921,6 +922,14 @@ export default function Calendar() {
 
                                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '10px 6px', minWidth: 0, overflow: 'hidden', justifyContent: 'center' }}>
                                         <LockedBox size={26} style={{ padding: '6px' }} />
+                                    </div>
+
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', background: 'var(--bg-main)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '10px 6px', minWidth: 0, overflow: 'hidden' }}>
+                                        <div style={{ fontSize: '0.68rem', textTransform: 'uppercase', color: 'var(--text-secondary)', fontWeight: 600, minHeight: '2.4em', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{t('Sky Sign')}</div>
+                                        <div style={{ padding: '4px', marginTop: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '50px' }}>
+                                            <span style={{ fontSize: '32px', lineHeight: 1 }}>{selectedMonthSkySign.emoji}</span>
+                                        </div>
+                                        <div style={{ fontWeight: 700, fontSize: '0.85rem', marginTop: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '100%' }}>{t(selectedMonthSkySign.name)}</div>
                                     </div>
                                 </div>
 

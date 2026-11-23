@@ -2,13 +2,49 @@ export interface WikiSearchResult {
     title: string;
     pageid: number;
     snippet: string;
+    lang?: 'en' | 'fr';
 }
 
 export async function fetchWikiSearch(query: string, language: 'en' | 'fr' = 'en'): Promise<WikiSearchResult[]> {
-    const url = `https://${language}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`;
-    const res = await fetch(url);
-    const data = await res.json();
-    return data.query?.search || [];
+    const primaryLang: 'en' | 'fr' = language;
+    const secondaryLang: 'en' | 'fr' = language === 'fr' ? 'en' : 'fr';
+
+    const fetchForLang = async (lang: 'en' | 'fr'): Promise<WikiSearchResult[]> => {
+        const url = `https://${lang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`;
+        const res = await fetch(url);
+        const data = await res.json();
+        return (data.query?.search || []).map((item: WikiSearchResult) => ({ ...item, lang }));
+    };
+
+    const [primaryRes, secondaryRes] = await Promise.allSettled([
+        fetchForLang(primaryLang),
+        fetchForLang(secondaryLang),
+    ]);
+
+    const primaryList = primaryRes.status === 'fulfilled' ? primaryRes.value : [];
+    const secondaryList = secondaryRes.status === 'fulfilled' ? secondaryRes.value : [];
+
+    const seen = new Set<string>();
+    const combined: WikiSearchResult[] = [];
+
+    for (const item of [...primaryList, ...secondaryList]) {
+        const key = item.title.trim().toLowerCase();
+        if (!seen.has(key)) {
+            seen.add(key);
+            combined.push(item);
+        }
+    }
+
+    const qLower = query.trim().toLowerCase();
+    const score = (item: WikiSearchResult) => {
+        const tLower = item.title.trim().toLowerCase();
+        if (tLower === qLower) return 0;
+        if (tLower.startsWith(qLower)) return 1;
+        return 2;
+    };
+    combined.sort((a, b) => score(a) - score(b));
+
+    return combined;
 }
 
 export type WikiEntityDetails = {
@@ -23,7 +59,7 @@ const monthMap: Record<string, number> = {
     'juillet': 7, 'août': 8, 'aout': 8, 'septembre': 9, 'octobre': 10, 'novembre': 11, 'décembre': 12, 'decembre': 12
 };
 
-export async function fetchWikiEntityDetails(title: string, language: 'en' | 'fr' = 'en'): Promise<WikiEntityDetails> {
+export async function fetchWikiEntityDetails(title: string, language: 'en' | 'fr' = 'en', tryFallback = true): Promise<WikiEntityDetails> {
     let foundDate: { year: number, month: number, day: number } | null = null;
     let foundEndDate: { year: number, month: number, day: number } | null = null;
 
@@ -197,6 +233,11 @@ export async function fetchWikiEntityDetails(title: string, language: 'en' | 'fr
                 }
             }
         }
+    }
+
+    if (!foundDate && tryFallback) {
+        const fallbackLang: 'en' | 'fr' = language === 'fr' ? 'en' : 'fr';
+        return fetchWikiEntityDetails(title, fallbackLang, false);
     }
 
     return { foundDate, foundEndDate };
