@@ -705,7 +705,8 @@ export default function Calendar() {
 
                         const cardBorder = luckyReasons.length > 0 ? '2px solid var(--accent-gold)' : '1px solid var(--border-color)';
                         const selectedDayOfYear = getDayOfYear(currentMonth, selectedDay, currentYear);
-                        const selectedWeekOfYear = Math.ceil(selectedDayOfYear / 7);
+                        const jan1MondayIndex = (new Date(currentYear, 0, 1).getDay() + 6) % 7;
+                        const selectedWeekOfYear = Math.ceil((selectedDayOfYear + jan1MondayIndex) / 7);
 
                         return (
                             <div className="card matrix-details-card" style={{ border: cardBorder }}>
